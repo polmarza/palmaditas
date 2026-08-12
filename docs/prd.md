@@ -68,7 +68,7 @@ tres mensajes.
 |-----------|-----|----------|--------------|
 | **Rosa** | La entregada | Entusiasmo sin filtro, reacciona antes de terminar de leer | Mayúsculas, emojis, "TE LO DIJE", audios que amenaza con mandar y nunca manda |
 | **Nacho** | El visionario | Extrapola tu idea a una ronda de financiación y una salida a bolsa | Vocabulario de LinkedIn, "esto es un océano azul", habla de escalar antes de que exista |
-| **Bego** | La documentalista | **Busca de verdad** y aporta datos reales, siempre con la fuente enlazada | "espera que lo miro" / "vale lo tengo, te dejo el enlace" |
+| **Bego** | La documentalista | La que va a por los datos: los ofrece, los mira y los trae. Si la etiquetas, busca de verdad y cita la fuente | "espera que lo miro" / "yo diría 900, pero si quieres lo confirmo" |
 | **Iván** | El aguafiestas | El único que pone una pega. Los otros tres se le echan encima | Seco, escribe poco, "¿y quién paga esto?", "esto ya existe y se llama X" |
 
 **Iván es la pieza que hace que el producto no se agote.** Sin él son cuatro personas de acuerdo:
@@ -85,19 +85,19 @@ Reglas transversales del elenco:
 - Los otros tres nunca critican la idea. Como mucho la malinterpretan y apoyan la versión
   malinterpretada. Y siempre acaban desestimando a Iván.
 - Se hablan entre ellos, no solo a ti. Rosa contesta a Nacho antes que al usuario.
-- **Bego es la parte fiable del chat: busca de verdad y cita la fuente con enlace.** Todo lo demás
-  del grupo es coña; lo suyo va con enlace y se puede comprobar. Esa separación es lo que permite
-  que el producto dé información útil sin engañar a nadie.
-- **Ninguna cifra de Bego sale sin haberla buscado.** Si no encuentra nada, lo dice — "pues no
-  encuentro nada decente de eso" es mejor respuesta que un número inventado. Puede interpretar lo
-  que encuentra a favor de la idea, pero no puede cambiarlo.
-- **Solo Bego da cifras.** Rosa, Nacho e Iván no sueltan números. Si Iván necesita un dato para su
-  objeción, la formula como pregunta ("¿qué margen te queda ahí?") en lugar de inventárselo.
+- **Cualquiera puede decir una cifra, pero solo lleva fuente si la ha buscado.** Un dato de memoria
+  va siempre marcado como tal en el propio mensaje ("yo diría que unos 900, pero no me hagas caso").
+  Un dato con enlace es lo único comprobable del chat. Esa distinción se ve leyendo, no depende de
+  ningún aviso legal.
+- **Solo puede buscar quien ha sido etiquetado**, y si no encuentra nada lo dice: "pues no encuentro
+  nada decente de eso" es mejor respuesta que un número inventado. El dato se puede interpretar a
+  favor de la idea, pero no cambiar.
 
-> Esta decisión sustituye a un diseño anterior en el que Bego se inventaba estadísticas absurdas. Se
-> descartó tras una prueba real: sus cifras salían verosímiles en lugar de delirantes —llegó a dar
-> precios de alquiler de una ciudad concreta— y se usaban como información. Con búsqueda real el
-> problema desaparece de raíz, porque los datos son ciertos.
+> Esta regla sustituye a dos diseños anteriores. El primero hacía que Bego se inventara estadísticas
+> absurdas; se descartó porque en la prueba real salían verosímiles en lugar de delirantes —llegó a
+> dar precios de alquiler de una ciudad concreta— y se usaban como información. El segundo daba la
+> exclusiva de los números a Bego, lo que era artificial: son todos el mismo modelo. Lo que importa no
+> es quién lo dice, sino si va con fuente.
 - Nadie da consejo real de negocio, inversión, salud ni legal. Si el usuario pide eso, el grupo
   sigue a lo suyo: sigue siendo un chat de ánimo, no un asesor.
 - **Los prompts del elenco viven en el repositorio público, a la vista.** Son el producto que se
@@ -113,10 +113,10 @@ Reglas transversales del elenco:
 - Respuestas troceadas en mensajes cortos, no en párrafos largos.
 - Indicador "escribiendo…" por personaje, con retardos distintos entre ellos.
 - Los personajes responden en orden variable y se referencian entre sí.
-- **Menciones con `@`**, como en cualquier app de mensajería: escribir `@Bego mírame los precios` hace
-  que conteste solo ella y que los demás se callen. Es la mecánica que hace viable la búsqueda web
-  —solo se activa al etiquetar a Bego— y de paso da al usuario una forma natural de dirigir la
-  conversación.
+- **Menciones con `@`**, como en cualquier app de mensajería: escribir `@Bego mírame los precios` o
+  `@Nacho tú qué harías` hace que conteste solo esa persona y que los demás se callen. Es la mecánica
+  que hace viable la búsqueda web —solo puede buscar quien está etiquetado— y de paso da al usuario
+  una forma natural de dirigir la conversación.
 - El usuario puede seguir escribiendo mientras el grupo responde.
 - Aviso visible y permanente de que es un producto humorístico y de que nada de lo que dicen los
   personajes es información real.
@@ -124,8 +124,9 @@ Reglas transversales del elenco:
   con el mismo efecto de escritura y los mismos retardos que el chat real, pero **guionizada, sin
   llamadas a la API**. Es el escaparate y el sustituto de la prueba gratuita: coste cero por
   visita, y se ve exactamente lo que compras.
-- Saldo de mensajes vinculado a una sesión anónima, gestionado en el servidor (el navegador solo
-  guarda un identificador opaco; ver `architecture.md`).
+- Saldo vinculado a una sesión anónima, gestionado en el servidor (el navegador solo guarda un
+  identificador opaco; ver `architecture.md`). **Se mide en consumo real de API y se muestra como una
+  estimación de mensajes restantes** — nunca una cifra en dólares.
 - Ejecución autohospedada con clave de API propia, misma experiencia, sin pasarela de pago.
 - Prompts del elenco publicados en el repositorio.
 

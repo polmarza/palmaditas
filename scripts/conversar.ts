@@ -44,8 +44,8 @@ juzgar si los personajes tienen gracia, no si la animación funciona.
 Etiqueta a alguien para hablar solo con esa persona:
   ${MENCIONES_DISPONIBLES}
 
-Solo @Bego busca en internet, y solo cuando la etiquetas. Por eso esas
-tandas cuestan unas cinco veces más que las normales.
+Quien está etiquetado puede buscar en internet — y solo entonces. Por eso
+esas tandas cuestan unas cinco veces más que las normales.
 
   /coste    resumen de gasto
   /salir    terminar y guardar la transcripción${RESET_ANSI}

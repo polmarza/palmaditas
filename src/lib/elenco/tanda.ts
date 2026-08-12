@@ -52,9 +52,9 @@ const cliente = new Anthropic()
 /**
  * Genera una tanda: los personajes que toquen, en una sola llamada.
  *
- * **La búsqueda web solo se activa cuando el usuario etiqueta a Bego.** Tenerla
- * siempre puesta multiplicaba el coste por cinco (12.900 tokens de entrada
- * frente a 1.900) porque los resultados entran en el contexto. Ver
+ * **La búsqueda web solo se activa cuando el usuario etiqueta a alguien.**
+ * Tenerla siempre puesta multiplicaba el coste por cinco (12.900 tokens de
+ * entrada frente a 1.900) porque los resultados entran en el contexto. Ver
  * docs/architecture.md.
  *
  * Con búsqueda, la llamada puede pausarse mientras el servidor la ejecuta
@@ -63,7 +63,8 @@ const cliente = new Anthropic()
 export async function generarTanda(historial: Turno[]): Promise<ResultadoTanda> {
   const ultimo = historial.at(-1)
   const mencion = ultimo?.rol === 'usuario' ? detectarMencion(ultimo.contenido) : null
-  const puedeBuscar = mencion === 'bego'
+  // Cualquiera al que etiqueten puede buscar, no solo Bego.
+  const puedeBuscar = mencion !== null
 
   const mensajes: Anthropic.MessageParam[] = historial.map((turno) => ({
     role: turno.rol === 'usuario' ? ('user' as const) : ('assistant' as const),

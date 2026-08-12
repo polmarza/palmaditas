@@ -54,9 +54,12 @@ flowchart TD
 ### Pasos
 
 1. Escribe su idea y envía. Su mensaje aparece al instante en verde, con doble check.
-2. Se descuenta un mensaje del saldo, en el servidor, antes de llamar al modelo.
+2. El servidor comprueba que hay saldo suficiente para la tanda más cara que ese mensaje pueda
+   generar (más alto si etiqueta a alguien, porque puede buscar).
 3. Pasa la salvaguarda (ver FLOW-04).
-4. Se genera la tanda: los cuatro mensajes en una sola llamada.
+4. Se genera la tanda en una sola llamada. Si el mensaje etiquetaba a alguien, contesta solo esa
+   persona y es la única que puede buscar.
+5. **Se descuenta el coste real de la respuesta**, después de recibirla.
 5. El orquestador los suelta escalonados. La cabecera va mostrando quién escribe.
 6. El usuario puede seguir escribiendo mientras el grupo responde.
 
@@ -81,7 +84,8 @@ flowchart TD
 
 | Situación | Comportamiento |
 |-----------|----------------|
-| **Falla la llamada al modelo** | **Se devuelve el mensaje al saldo.** Aviso discreto y opción de reintentar. Cobrar por una respuesta que no llegó es inaceptable |
+| **Falla la llamada al modelo** | **No se descuenta nada**: no hay coste que cobrar porque no ha habido respuesta. Aviso discreto y opción de reintentar |
+| Queda saldo para conversar pero no para buscar | Se avisa antes de enviar —"te queda poco, las búsquedas gastan más"— en lugar de fallar a mitad |
 | Se corta la conexión a media tanda | Los mensajes ya mostrados se quedan. Al recuperar, no se reintenta solo: el usuario decide |
 | El usuario envía varios seguidos muy rápido | Se encolan y se responden en orden. Cada uno descuenta su mensaje |
 | Respuesta malformada del modelo | Se reintenta una vez en silencio. Si vuelve a fallar, se trata como fallo y se devuelve el saldo |

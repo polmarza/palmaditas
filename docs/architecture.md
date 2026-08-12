@@ -83,16 +83,20 @@ atado a un identificador anónimo:
    crea una fila: `id_sesion`, `mensajes_restantes`, `creado_en`.
 2. Ese identificador viaja al navegador en una **cookie firmada, `httpOnly`, `Secure`,
    `SameSite=Lax`**. No es legible desde JavaScript.
-3. Cada envío, el route handler lee la cookie, busca la fila, comprueba el saldo y **descuenta en el
-   servidor**.
+3. Cada envío, el route handler lee la cookie, busca la fila, comprueba que hay saldo suficiente,
+   llama al modelo y **descuenta el coste real de la respuesta**.
+
+**El saldo se mide en coste de API, no en mensajes** — ver `docs/data-model.md` para el esquema y las
+sentencias. Como el coste no se conoce hasta que el modelo responde, el orden es **comprobar contra un
+umbral → llamar → descontar**, nunca descontar por adelantado. El usuario ve una estimación en
+mensajes restantes, jamás una cifra en dólares.
 
 **Por qué no se puede manipular:** el saldo no está en el cliente. El navegador solo tiene un
 identificador opaco. Si el usuario lo altera, el servidor no encuentra esa fila y no hay saldo que
 gastar. No hay nada que falsificar porque no hay ningún número en su máquina.
 
-**Descuento antes de generar, no después.** El saldo se decrementa de forma atómica antes de llamar
-a la API, para que dos peticiones simultáneas no puedan gastar el mismo mensaje dos veces. Si la
-llamada al modelo falla, se devuelve el mensaje al saldo.
+**El descuento es atómico y va después de la respuesta.** Si la llamada al modelo falla, no se
+descuenta nada: no hay coste que cobrar porque no ha habido respuesta.
 
 **Recuperación (SHOULD).** El único agujero real es perder la cookie: borrar cookies o cambiar de
 dispositivo deja el saldo huérfano. Se resuelve con un enlace de recuperación enviado por email tras
@@ -247,7 +251,21 @@ el cliente. El coste es perder el saldo al borrar cookies, mitigado con el enlac
 **Consecuencias:** una llamada extra por mensaje (~15 % más de coste, despreciable) y una batería de
 casos límite que mantener. **Bloqueante para el lanzamiento.**
 
-### 2026-08-12 — La búsqueda solo se activa al etiquetar a Bego
+### 2026-08-12 — El saldo se mide en coste de API, no en mensajes
+
+**Contexto:** el modelo de "100 mensajes por 5 €" se rompió en cuanto una función nueva —la búsqueda—
+multiplicó por cinco el coste de una tanda. Contar mensajes obliga a poner el precio pensando en el
+peor caso o a comerse la diferencia.
+**Decisión:** el saldo es consumo real de API (`saldo_micros`, millonésimas de dólar). 5 € acreditan
+1 $ de consumo, unos 250 mensajes normales. **Al usuario se le muestra una estimación en mensajes, no
+el saldo en dinero.**
+**Consecuencias:** el precio aguanta cualquier cambio de coste futuro sin rehacerlo, y quien usa
+funciones caras las paga. A cambio, el descuento pasa a ser posterior a la llamada (con un umbral
+previo para que un mensaje caro no deje el saldo en negativo relevante), y hay que mantener una
+estimación de mensajes que es aproximada por definición — si se desvía mucho del consumo real, el
+usuario notará que el contador baja a saltos.
+
+### 2026-08-12 — La búsqueda solo se activa al etiquetar a alguien
 
 **Contexto:** con la búsqueda web declarada en todas las tandas, la primera medición dio 12.971
 tokens de entrada frente a los 1.881 de una tanda normal — los resultados de búsqueda entran en el

@@ -26,11 +26,23 @@ Una fila por compra. Es la única tabla del proyecto.
 | Campo | Tipo | Descripción |
 |-------|------|-------------|
 | `id` | `uuid` PK, default `gen_random_uuid()` | El identificador que viaja en la cookie firmada |
-| `mensajes_restantes` | `integer` NOT NULL, `CHECK >= 0` | Saldo. La restricción impide que quede en negativo por una carrera |
+| `saldo_micros` | `bigint` NOT NULL | **Saldo en millonésimas de dólar de coste de API.** 5 € de compra acreditan 1.000.000 (= 1 $) |
 | `email` | `text` NULL | Solo para el enlace de recuperación. Nulo si no se capturó |
 | `referencia_pago` | `text` NOT NULL, **UNIQUE** | Id del cobro en la pasarela |
 | `creado_en` | `timestamptz` NOT NULL, default `now()` | |
 | `ultimo_uso_en` | `timestamptz` NULL | Se actualiza en cada mensaje. Solo para limpieza |
+
+**El saldo se mide en coste real, no en mensajes.** Un envío corto sin búsqueda gasta unos 3.300
+micros; una tanda con búsqueda, unos 16.500. Así el modelo no se rompe cuando cambia el coste de una
+función: simplemente el saldo baja más rápido.
+
+**Enteros, no decimales.** Millonésimas de dólar en `bigint` en lugar de `numeric` o coma flotante:
+los descuentos son sumas exactas y no hay redondeos que se acumulen a lo largo de una conversación.
+
+> **Al usuario nunca se le muestra este número.** En pantalla se traduce a una estimación de
+> mensajes restantes (`saldo_micros / coste_medio_por_mensaje`). "Te quedan 0,37 $" no significa nada
+> para nadie, y le obliga a calcular si escribir de más le va a salir caro — justo lo que no
+> queremos en un producto donde la gracia es soltar ideas sin pensar.
 
 **`referencia_pago` es UNIQUE a propósito, y hace de mecanismo de idempotencia.** Las pasarelas
 reintentan los webhooks: si el mismo cobro llega dos veces, el segundo `INSERT` falla contra el
@@ -79,21 +91,39 @@ es un fallo de seguridad, no un detalle de estilo.
 
 ## Operaciones sobre el saldo
 
-**Descuento atómico, en una sola sentencia.** Nunca leer el saldo, decidir en el código y luego
-escribir: dos peticiones simultáneas gastarían el mismo mensaje dos veces.
+Como el coste no se conoce hasta que el modelo responde, el orden es **comprobar → llamar →
+descontar**, no descontar por adelantado.
+
+**1. Comprobar antes de llamar.** Con un umbral por delante, no con `> 0`: hay que asegurarse de que
+queda para pagar la tanda más cara que esa petición pueda generar.
+
+```sql
+SELECT saldo_micros FROM sesiones WHERE id = $1;
+-- Sin mención: exigir saldo_micros >= COSTE_MAX_TANDA_NORMAL
+-- Con mención (puede buscar): exigir saldo_micros >= COSTE_MAX_TANDA_CON_BUSQUEDA
+```
+
+Si no llega, se responde con la pantalla de recarga y **no se llama al modelo**. Cuando el saldo da
+para conversar pero no para buscar, se avisa en lugar de fallar: *"te queda poco, las búsquedas
+gastan más"*.
+
+**2. Descontar después, en una sola sentencia atómica** con el coste real de la respuesta:
 
 ```sql
 UPDATE sesiones
-   SET mensajes_restantes = mensajes_restantes - 1,
-       ultimo_uso_en      = now()
+   SET saldo_micros  = saldo_micros - $2,
+       ultimo_uso_en = now()
  WHERE id = $1
-   AND mensajes_restantes > 0
-RETURNING mensajes_restantes;
+RETURNING saldo_micros;
 ```
 
-Si no devuelve ninguna fila, no había saldo: se responde con la pantalla de recarga y **no se llama
-al modelo**. Si la llamada al modelo falla después, se devuelve el mensaje al saldo con el `UPDATE`
-inverso.
+**Sin `CHECK >= 0` y sin condición en el `WHERE`:** el descuento tiene que aplicarse siempre, incluso
+si deja el saldo ligeramente en negativo. Una respuesta ya entregada se cobra; lo que impide que eso
+ocurra de forma relevante es el umbral del paso 1, no una restricción de la tabla. Un saldo negativo
+simplemente significa que el usuario no puede enviar más hasta recargar.
+
+**Si la llamada al modelo falla, no se descuenta nada** — no hay coste que cobrar porque no ha habido
+respuesta.
 
 ---
 

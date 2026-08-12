@@ -18,63 +18,69 @@ de comer.
 
 ## Modelo de monetización
 
-**Pago único que acredita un número de mensajes a una sesión anónima.** Sin suscripción, sin
-cuentas, sin prueba gratuita.
+**Pago único que acredita saldo de consumo a una sesión anónima.** Sin suscripción, sin cuentas, sin
+prueba gratuita.
 
 | | |
 |---|---|
-| **Qué se compra** | Un paquete de mensajes. Un mensaje = un envío tuyo al grupo, que dispara la tanda de respuestas de los cuatro personajes |
-| **Precio de partida** | 5 € por 100 mensajes |
+| **Qué se compra** | 1 $ de consumo de API. Con el coste actual son unos **217 mensajes** normales |
+| **Precio de partida** | 5 € |
+| **Qué ve el usuario** | Una estimación en mensajes restantes. **Nunca el saldo en dinero** |
 | **Recarga** | Mismo paquete, sin perder la conversación en curso |
 | **Pasarela** | **Sin decidir.** No bloquea el desarrollo — ver más abajo |
 | **Alternativa gratuita** | Clonar el repositorio y poner tu propia clave de API |
 
-### Por qué 100 mensajes por 5 €
+### Por qué se mide en coste y no en mensajes
 
-Porque el coste real es ínfimo y el precio no está puesto para cubrir la API, sino para que la
-cifra suene generosa y quite de la cabeza la idea de racionar.
+Porque un mensaje no cuesta siempre lo mismo, y la diferencia no es pequeña: una tanda normal gasta
+0,0033 $ y una con búsqueda 0,0165 $ — cinco veces más. Contar mensajes a secas obliga a elegir entre
+poner el precio pensando en el peor caso (caro e injusto para quien no busca) o comerse la diferencia
+cuando alguien usa mucho las menciones.
 
-**Cifras medidas** en una conversación real de cinco tandas (2026-08-12, Haiku 4.5 a $1 por millón
-de tokens de entrada y $5 de salida):
+Midiendo consumo real, el modelo aguanta cualquier cambio de coste futuro sin rehacer el precio:
+si una función nueva gasta más, el saldo baja más rápido y nada se rompe.
 
-| Concepto | Medido |
-|---|---|
-| Entrada, primera tanda | 1.881 tokens |
-| Entrada, quinta tanda | 2.892 tokens |
-| Salida por tanda | 150–290 tokens |
-| **Coste por mensaje del usuario** | **0,0033 – 0,0043 $** |
-| Coste de una conversación de 20 mensajes (extrapolado) | ~0,11 $ |
-| Coste de agotar un paquete de 100 mensajes | **~0,50 $** |
+**Pero el usuario nunca ve un número en dólares.** En pantalla pone "te quedan ~180 mensajes",
+estimado sobre el coste medio. Un saldo en dinero no le dice nada y le obliga a calcular si escribir
+de más le sale caro, que es exactamente el cálculo que no quieres que haga alguien a quien le estás
+pidiendo que suelte ideas sin pensar. Cuando tira de menciones, el contador baja más rápido y ahí sí
+se le avisa de que verificar datos gasta más.
 
-**El coste por tanda crece con la conversación**, porque el historial entero viaja en cada llamada:
-la quinta tanda cuesta un 30 % más que la primera. Por eso el número que importa no es el de una
-tanda suelta sino el acumulado de una conversación larga.
+Margen bruto con estas cifras: **en torno al 80 %** (5 € ≈ 5,4 $ de ingreso frente a 1 $ de consumo
+máximo), antes de comisión de pasarela e IVA.
 
-Sobre 5 € de ingreso, agotar un paquete cuesta en torno al 10 % en tokens. El resto se lo lleva la
-comisión de la pasarela, el IVA según el proveedor que elijamos, y el margen. **El riesgo de que un
-usuario dispare la factura no existe a esta escala** — para gastar 5 € en tokens tendría que enviar
-del orden de mil mensajes.
+### Los números medidos
 
-### Las tandas con búsqueda cuestan cinco veces más
+Medidos en conversaciones reales el 2026-08-12, con Haiku 4.5 a 1 $ por millón de tokens de entrada
+y 5 $ de salida:
 
-Medido el mismo día: una tanda **con búsqueda web activa** gasta **12.971 tokens de entrada** frente
-a los 1.881 de una normal, porque los resultados de la búsqueda entran en el contexto. El coste pasa
-de 0,0033 $ a **0,0165 $ por tanda**.
-
-Con la búsqueda activada en todas las tandas, un paquete de 100 mensajes costaría del orden de **2 a
-3 dólares** — la mitad del ingreso, sin contar las búsquedas, que se facturan aparte. **Eso rompería
-el modelo.**
-
-Por eso la búsqueda **solo se activa cuando el usuario etiqueta a Bego** con `@Bego`. Las
-conversaciones normales vuelven a costar 0,0033 $ por tanda, y solo se paga la tanda cara cuando
-alguien pide expresamente que se verifique un dato:
-
-| Uso de `@Bego` | Coste medio por mensaje | Paquete de 100 |
+| Tipo de tanda | Entrada | Coste |
 |---|---|---|
-| Nunca | 0,0033 $ | ~0,50 $ |
-| 1 de cada 10 mensajes | ~0,0046 $ | ~0,70 $ |
-| 1 de cada 4 mensajes | ~0,0066 $ | ~1,00 $ |
-| En todos | 0,0165 $ | ~2,50 $ |
+| Normal, primera de la conversación | 1.881 tokens | 0,0033 $ |
+| Normal, quinta de la conversación | 2.892 tokens | 0,0043 $ |
+| **Con búsqueda web** | **12.971 tokens** | **0,0165 $** |
+
+Dos cosas que salen de aquí:
+
+**El coste crece con la conversación**, porque el historial entero viaja en cada llamada: la quinta
+tanda cuesta un 30 % más que la primera. Es otro motivo para medir consumo y no mensajes.
+
+**Una tanda con búsqueda cuesta cinco veces más**, porque los resultados entran en el contexto. Por
+eso la búsqueda solo se activa cuando el usuario etiqueta a alguien: es él quien decide cuándo pagar
+la tanda cara, y solo la paga si de verdad quiere un dato verificado.
+
+### Cuántos mensajes da 1 $ de saldo
+
+| Uso de menciones | Coste medio por mensaje | Mensajes por 1 $ |
+|---|---|---|
+| Nunca | ~0,0040 $ | ~250 |
+| 1 de cada 10 | ~0,0053 $ | ~190 |
+| 1 de cada 4 | ~0,0071 $ | ~140 |
+| En todos | 0,0165 $ | ~60 |
+
+Incluso en el caso extremo —etiquetar a alguien en cada mensaje, con búsqueda cada vez— salen sesenta
+mensajes por 5 €, y el margen sigue en el 80 %. **No hay forma de que un usuario dispare la factura**,
+porque el saldo se agota antes.
 
 > ⚠️ **Sigue pendiente de medir el precio de la búsqueda en sí**, que se factura aparte de los
 > tokens. El script cuenta cuántas se hacen; hay que multiplicarlas por la tarifa vigente y sumarlas
