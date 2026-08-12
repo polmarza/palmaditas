@@ -1,45 +1,90 @@
 # Roadmap
 
-<!-- Planificación de fases de desarrollo. No es un calendario con fechas exactas,
-     sino una guía de prioridades.
-     Actualizar cuando algo pase de una fase a otra, o cuando se redefinan las prioridades. -->
+Guía de prioridades, no un calendario. Actualizar cuando algo cambie de fase o se redefinan las
+prioridades.
 
 ---
 
-## Fase 1 — MVP
+## Fase 0 — El elenco, antes que nada
 
-<!-- Funcionalidades mínimas para validar que el producto tiene sentido.
-     El criterio: ¿qué necesita existir para que un usuario real lo use y lo encuentre útil?
-     
-     - [ ] ... -->
+**Esto va primero, y no es una fase de calentamiento.** Todo el proyecto depende de una sola
+pregunta: ¿los cuatro personajes tienen gracia durante quince mensajes seguidos? Si la respuesta es
+no, no hay producto — y sería absurdo descubrirlo después de construir pasarela, saldo y landing.
 
-**Objetivo de validación:** <!-- Qué quieres haber aprendido al terminar esta fase -->
+- [ ] Escribir los prompts de Rosa, Nacho, Bego e Iván
+- [ ] Un script de terminal mínimo, sin interfaz, que mantenga una conversación con la tanda completa
+- [ ] Conversar con él en serio: veinte mensajes, ideas buenas y malas, temas variados
+- [ ] Ajustar hasta que las cuatro voces se distingan sin leer el nombre
+- [ ] Verificar que Iván aporta pegas reales y que los otros tres se le echan encima de forma creíble
+- [ ] Medir el coste real por tanda y contrastarlo con las estimaciones de `business.md`
 
----
-
-## Fase 2 — Mejora sobre validación
-
-<!-- Mejoras basadas en el feedback real de la Fase 1.
-     No planificar esto en detalle hasta haber terminado la Fase 1.
-     
-     - [ ] ... -->
+**Objetivo de validación:** que leyendo la transcripción en bruto, sin interfaz ni ritmo, ya haga
+gracia. Si solo funciona gracias a la animación, el producto es un truco y se agota.
 
 ---
 
-## Fase 3 — Escalado
+## Fase 1 — MVP jugable, sin pagos
 
-<!-- Funcionalidades de crecimiento, rendimiento o monetización avanzada.
-     Solo relevante si el producto ha validado su mercado.
-     
-     - [ ] ... -->
+Palmaditas funcionando de verdad, en local y desplegado, con la clave de API propia. Sin cobrar
+todavía.
+
+- [ ] Proyecto Next.js + Tailwind + shadcn/ui + AI Elements
+- [ ] Componentes del chat: `MessageBubble`, `ChatHeader`, `DoodleBackground`
+- [ ] **Favicon**: SVG propio dibujado imitando el emoji de palmadas (👏). Dibujado por nosotros, no
+      copiado de ningún set de emojis con licencia propietaria
+- [ ] Orquestador de ritmo: retardos y velocidades por personaje, escalonado, "escribiendo…" en la
+      cabecera con varios nombres a la vez
+- [ ] Route handler de chat, con streaming
+- [ ] **Salvaguarda** (FLOW-04) con su batería de casos límite. **Bloqueante**
+- [ ] Aviso permanente de que es humor y nada de lo que dicen es real
+- [ ] Despliegue en Vercel con el dominio
+
+**Objetivo de validación:** enseñárselo a diez personas y ver si comparten una captura sin que se lo
+pidas. Si nadie comparte nada, el problema es el contenido y volvemos a Fase 0.
+
+---
+
+## Fase 2 — Cobrar
+
+Solo tiene sentido si la Fase 1 ha gustado.
+
+- [ ] Decidir pasarela (decisión fiscal, ver `business.md`)
+- [ ] Tabla `sesiones` en Supabase + RLS activado sin políticas
+- [ ] Adaptador de pago: crear cobro y procesar webhook, con idempotencia
+- [ ] Saldo: descuento atómico, devolución si falla el modelo, límite por IP
+- [ ] Pantalla de recarga sin perder la conversación (FLOW-03)
+- [ ] Landing con la demo guionizada y el elenco presentado
+- [ ] README del repositorio público con instrucciones de autohospedaje
+- [ ] Revisión de seguridad antes de exponerlo (`/security-review`)
+
+**Objetivo de validación:** que alguien que no conozcas pague. Una sola vez basta para saber que el
+producto se puede vender.
+
+---
+
+## Fase 3 — Retención y difusión
+
+Solo si hay señales de que la gente lo usa más de una vez.
+
+- [ ] Exportar la conversación como imagen, para compartir
+- [ ] Enlace de recuperación de saldo por email (FLOW-06)
+- [ ] Modo oscuro
+- [ ] Reacciones con emoji
+- [ ] Mensajes espontáneos del grupo cuando llevas rato callado
+- [ ] Personajes desbloqueables: Quique, la madre orgullosa, el cuñado
+- [ ] Elegir cuántos participantes hay en el grupo
 
 ---
 
 ## Descartado (con motivo)
 
-<!-- Funcionalidades que se han considerado y descartado explícitamente.
-     Registrarlas evita reabrir debates.
-     
-     | Funcionalidad | Motivo del descarte |
-     |---------------|---------------------|
-     | ... | ... | -->
+| Funcionalidad | Motivo del descarte |
+|---------------|---------------------|
+| Prueba gratuita en la web | Regalar uso cuando el código está publicado y cualquiera puede ejecutarlo gratis no tiene sentido. La landing enseña la demo guionizada |
+| Cuentas de usuario | Fricción y trabajo (auth, perfiles, recuperación) que el producto no necesita. El pago no requiere identidad |
+| Suscripción mensual | El uso es esporádico, no diario |
+| Modo "feedback honesto" | Mata la premisa. La única crítica es la de Iván, y siempre pierde |
+| Ilustraciones de los personajes | Abre decisiones de representación que no aportan y encarecen el proyecto. Avatares con iniciales |
+| Integración real con WhatsApp | Ni técnicamente sencillo ni conveniente respecto a la marca de un tercero |
+| Guardar el historial de conversaciones | Contradice la privacidad del producto: la gente escribe aquí ideas que no ha contado a nadie |
+| Voz o audio generado | Coste y complejidad muy por encima de lo que aporta a la broma |

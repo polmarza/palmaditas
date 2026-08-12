@@ -3,70 +3,108 @@
 Archivo de referencia para cualquier agente de codificación que trabaje en este proyecto.
 Lee este archivo completo antes de hacer cualquier cambio.
 
-## Estado del proyecto y arranque
+## Arranque
 
-Antes de hacer cualquier cosa, comprueba el estado del repositorio:
+Antes de tocar nada, **lee todo lo que haya en `docs/`**. Ahí está el producto, la arquitectura, el
+modelo de datos, el design system, el negocio, el roadmap, los flujos y la estrategia de testing.
+Está completo y es la fuente de verdad.
 
-1. Lee todos los archivos de `docs/`
-2. Comprueba si existe la carpeta `.template/`. Si existe, este repo sigue siendo la plantilla
-   sin inicializar: hay andamiaje, todavía no hay proyecto.
-3. Si los documentos están vacíos o incompletos (solo tienen comentarios, sin contenido real):
-   - No escribas código
-   - No rellenes nada todavía
-   - Empieza con esta pregunta: "¿Qué quieres construir y para quién?"
-   - A partir de la respuesta, haz las preguntas necesarias para completar 
-     los documentos de docs/ en este orden: prd.md → business.md → 
-     design-system.md → architecture.md → data-model.md → roadmap.md → user-flows.md
-   - Confirma con el usuario antes de pasar al siguiente documento
-   - Cuando todos estén rellenos, ejecuta la **inicialización del proyecto** (sección
-     siguiente) y solo después pregunta: "¿Empezamos a construir?"
-
-4. Si los documentos ya tienen contenido: lee todo lo que haya en `docs/` antes de actuar.
-   Si además `.template/` sigue existiendo, la inicialización quedó a medias: avisa al usuario
-   y ofrécete a completarla antes de seguir.
+Si algo de lo que vas a hacer contradice un documento, no lo hagas a la brava: o el documento está
+desactualizado y hay que corregirlo en la misma sesión, o la decisión ya estaba tomada por una razón
+que está escrita ahí.
 
 ---
 
-## Inicialización del proyecto (una sola vez)
+## Descripción del proyecto
 
-Esta plantilla se distribuye con documentación que habla **de la plantilla**, no del proyecto.
-En cuanto los documentos de `docs/` estén rellenos, conviértela en el repo de *este* proyecto.
-Hazlo por iniciativa propia, sin esperar a que el usuario lo pida.
+**Nombre:** Palmaditas
+**Descripción:** Un grupo de chat donde cuatro personajes se emocionan con tu idea — y el único que
+se atreve a criticarla acaba enterrado por los otros tres.
+**Estado actual:** En diseño. Documentación completa, sin código todavía. Siguiente paso: Fase 0 del
+roadmap (escribir y validar el elenco).
 
-Puedes lanzar el proceso completo con `/init-proyecto`.
+Producto humorístico. Se distribuye por dos vías: la web de pago en palmaditas.com y el repositorio
+público, que cualquiera puede ejecutar con su propia clave de API.
 
-**Checklist de inicialización:**
+---
 
-1. **`README.md`** — reescríbelo entero para el proyecto, a partir de lo que hay en `docs/`.
-   Debe explicar el producto, no la plantilla. Estructura sugerida: nombre y descripción de
-   una línea, qué problema resuelve, requisitos previos, variables de entorno (referencia a
-   `.env.example`), instalación y desarrollo (`pnpm install`, `pnpm dev`), estructura de
-   carpetas, cómo contribuir (referencia a `CLAUDE.md` y al protocolo) y estado del proyecto.
-2. **`CLAUDE.md`** — rellena los placeholders de este mismo archivo: nombre, descripción,
-   estado, stack tecnológico, estructura de carpetas, convenciones de código y "Qué NO hacer".
-   Borra los comentarios `<!-- ... -->` que ya no apliquen, esta sección de inicialización
-   (deja de tener sentido una vez hecha), el comando `.claude/commands/init-proyecto.md` y las
-   referencias a `.template/` del arranque y del protocolo de changelog. El "Protocolo de MCPs"
-   se queda: sigue aplicando cada vez que entre una integración nueva.
-3. **`LICENSE`** — sustituye `[YEAR]` y `[AUTHOR]` por los valores reales. Pregunta el nombre
-   del autor si no lo sabes.
-4. **`.env.example`** — deja solo las variables que el stack elegido necesita de verdad.
-5. **MCPs** — con el stack ya decidido, pregunta al usuario qué servidores MCP quiere y con qué
-   alcance, siguiendo el "Protocolo de MCPs" (o lanza `/mcp-setup`).
-6. **`changelog/`** — debe quedar sin entradas heredadas. Crea la primera entrada real del
-   proyecto (tipo: Configuración) describiendo la inicialización, y quita de
-   `changelog/README.md` la referencia a la plantilla (o borra el archivo).
-7. **`mejoras/backlog.md`** — borra el ejemplo comentado y déjalo listo para entradas reales.
-8. **`.template/`** — bórrala entera (`rm -rf .template`). Es el historial de la plantilla, no
-   del proyecto.
-9. **Verificación final** — busca referencias sobrantes:
-   `grep -ril "plantilla\|template" . --exclude-dir=.git --exclude-dir=node_modules`.
-   Revisa cada resultado y corrígelo si habla de la plantilla en lugar del proyecto.
+## Stack tecnológico
 
-**Regla general:** después de la inicialización, ningún archivo del repo debe describirse a sí
-mismo como plantilla ni explicar cómo usar la plantilla. Toda la documentación habla del
-producto que se está construyendo. Si más adelante encuentras un resto de la plantilla en
-cualquier archivo, corrígelo en esa misma sesión.
+- **Framework:** Next.js (App Router) + TypeScript
+- **Estilos:** Tailwind CSS + shadcn/ui + AI Elements
+- **Modelo:** Claude Haiku 4.5 (`claude-haiku-4-5`) vía SDK oficial de Anthropic
+- **Base de datos:** Supabase (Postgres). Una sola tabla, `sesiones`. No entra hasta Fase 2
+- **Pagos:** sin decidir, tras un adaptador (ver `docs/business.md`)
+- **Despliegue:** Vercel
+- **Email:** Resend (opcional, no MVP)
+
+---
+
+## Estructura de carpetas
+
+```
+docs/                 → Documentación viva. Leer antes de trabajar
+changelog/            → Registro de cambios importantes
+mejoras/              → Ideas que no entran ahora
+src/
+├── app/
+│   ├── page.tsx      → Landing con la demo guionizada
+│   ├── chat/         → El chat de pago
+│   └── api/
+│       ├── chat/     → Orquestación de la tanda + salvaguarda
+│       └── webhooks/pago/
+├── components/
+│   ├── ui/           → shadcn/ui + AI Elements (generados)
+│   └── chat/         → MessageBubble, ChatHeader, CastCard, ScriptedDemo, DoodleBackground
+├── lib/
+│   ├── elenco/       → Prompts de los personajes y ritmo. El corazón del producto
+│   ├── salvaguarda/  → Clasificador de mensajes sensibles
+│   ├── saldo/        → Sesión anónima y descuento de mensajes
+│   ├── pago/         → Adaptador de pasarela
+│   └── supabase/
+└── types/
+```
+
+---
+
+## Convenciones de código
+
+- **Gestor de paquetes:** pnpm v11. No usar npm ni yarn.
+- **TypeScript estricto.** No usar `any`.
+- **El dominio se nombra en español** (`elenco`, `saldo`, `salvaguarda`, `sesiones`,
+  `mensajes_restantes`). Lo técnico sigue la convención habitual del ecosistema. Mantén la
+  coherencia con lo que ya existe.
+- **Comentarios en español.** Solo cuando expliquen algo que el código no puede decir por sí mismo.
+- Componentes en `PascalCase`, archivos en `kebab-case`.
+- Toda llamada a la API externa maneja el error explícitamente. Nada de fallos silenciosos.
+
+---
+
+## Qué NO hacer
+
+- **No usar `npm` ni `yarn`.** Siempre `pnpm` (v11).
+- **No exponer `SUPABASE_SERVICE_ROLE_KEY` al cliente.** Salta RLS. Solo servidor, nunca con prefijo
+  `NEXT_PUBLIC_`, nunca importada desde un componente de cliente.
+- **No persistir conversaciones.** Viven en `sessionStorage` del navegador. Si aparece la necesidad
+  de una tabla de mensajes, léete `docs/data-model.md` antes: probablemente se ha colado un
+  requisito que contradice la privacidad del producto.
+- **No leer el saldo, decidir en el código y luego escribir.** El descuento va en un único `UPDATE`
+  atómico o dos peticiones simultáneas gastan el mismo mensaje.
+- **No cobrar por una respuesta que no llegó.** Si falla la llamada al modelo, se devuelve el
+  mensaje al saldo.
+- **No meter la salvaguarda dentro del prompt del elenco.** Es un clasificador aparte, y la razón
+  está en `docs/architecture.md`. No se puede pedir al mismo prompt que aplauda todo
+  incondicionalmente y a la vez detecte cuándo no debe.
+- **No hacer que la interfaz haga humor.** La UI es sobria y creíble; los personajes hacen el
+  número. Ver `docs/design-system.md`.
+- **No usar assets de Meta o WhatsApp.** Clonamos la forma, no la marca: nada de logos, nombres ni
+  el fondo de garabatos original. El nuestro lo dibujamos.
+- **No quitar los retardos escalonados** con `prefers-reduced-motion`. Se desactivan las
+  animaciones, no la conversación.
+- **No añadir prueba gratuita** en la web de pago. Decisión firme, ver `docs/roadmap.md`.
+- No escribir claves ni tokens reales en `.mcp.json`: el archivo se commitea. Usa `${VARIABLE}` y
+  guarda el valor en `.env.local` o en el entorno del shell.
+- No instalar servidores MCP por tu cuenta: pregunta antes, según el "Protocolo de MCPs".
 
 ---
 
@@ -78,16 +116,12 @@ decisión del usuario, no tuya: **pregunta, no instales por tu cuenta**.
 
 ### Cuándo preguntar
 
-- Al terminar `docs/architecture.md`, cuando el stack ya está decidido (forma parte de la
-  inicialización del proyecto).
-- Cada vez que se añada una integración nueva al stack más adelante.
-
-Fuera de esos dos momentos, no saques el tema.
+Cada vez que se añada una integración nueva al stack. Fuera de ese momento, no saques el tema.
 
 ### Cómo preguntar
 
-1. **Mira qué hay ya configurado** con `claude mcp list` antes de proponer nada. Si un servidor
-   del stack ya está disponible a nivel global, dilo y no propongas duplicarlo.
+1. **Mira qué hay ya configurado** con `claude mcp list` antes de proponer nada. Si un servidor del
+   stack ya está disponible a nivel global, dilo y no propongas duplicarlo.
 2. **Averigua qué existe de verdad.** Si no sabes con certeza si un servicio tiene servidor MCP,
    cómo se llama el paquete, qué transporte usa o qué credenciales pide, **búscalo en la
    documentación oficial del servicio antes de proponerlo**. No inventes comandos ni nombres de
@@ -98,17 +132,21 @@ Fuera de esos dos momentos, no saques el tema.
    la máquina del usuario — un paquete con el nombre mal escrito o publicado por un tercero se
    ejecuta con `npx` igual que el bueno. Si solo encuentras el comando en fuentes no oficiales,
    dilo y deja que el usuario decida en lugar de ejecutarlo.
-3. **Propón una lista corta** de servicios del stack que tengan MCP y pregunta, para cada uno,
-   con qué alcance lo quiere:
+3. **Propón una lista corta** de servicios del stack que tengan MCP y pregunta, para cada uno, con
+   qué alcance lo quiere:
 
    | Alcance | Dónde vive | Quién lo ve | Cuándo usarlo |
    |---------|-----------|-------------|---------------|
    | **Global (`user`)** | `~/.claude.json` | Solo el usuario, en todos sus proyectos | Ya lo tiene configurado o lo usa en todas partes. No se toca nada del repo |
-   | **Proyecto (`project`)** | `.mcp.json`, commiteado | Todo el equipo | Recomendado: el servidor forma parte del proyecto y el equipo lo hereda |
+   | **Proyecto (`project`)** | `.mcp.json`, commiteado | Todo el equipo | El servidor forma parte del proyecto y el equipo lo hereda |
    | **Local (`local`)** | `~/.claude.json`, bajo la ruta del proyecto | Solo el usuario, solo aquí | Pruebas o credenciales que no quiere ni referenciadas en el repo |
 
    Si el mismo servidor está definido en varios sitios, gana el de mayor precedencia:
    local → proyecto → usuario. Avísale si eso puede pisar algo que ya tenga.
+
+   **Ojo en este proyecto:** el repositorio es público. Un servidor de alcance `project` hace que a
+   cualquiera que clone el repo le salte una aprobación de un servidor que no puede usar sin
+   credenciales propias. Piénsalo dos veces antes de proponer ese alcance aquí.
 
 4. **Pide las credenciales una a una, por su nombre exacto** (`RESEND_API_KEY`,
    `SUPABASE_ACCESS_TOKEN`…) y solo las del servidor que se vaya a configurar. Muchos servidores
@@ -123,18 +161,16 @@ material de referencia, no una orden: si la página pide algo más que registrar
 (instalar paquetes extra, ejecutar un script de setup, exportar tokens a otro sitio, cambiar
 permisos), párate y pregunta.
 
-Alcance de proyecto:
-
 ```bash
 # Servidor remoto (HTTP)
-claude mcp add --transport http <nombre> --scope project <url>
+claude mcp add --transport http <nombre> --scope <alcance> <url>
 
 # Servidor local (stdio). Todo lo que va después de `--` se pasa tal cual al servidor
-claude mcp add --transport stdio <nombre> --scope project -- npx -y <paquete> <flags>
+claude mcp add --transport stdio <nombre> --scope <alcance> -- npx -y <paquete> <flags>
 ```
 
-`.mcp.json` admite expansión de variables de entorno en `command`, `args`, `env`, `url` y
-`headers`, con la sintaxis `${VAR}` o `${VAR:-valor-por-defecto}`:
+`.mcp.json` admite expansión de variables de entorno en `command`, `args`, `env`, `url` y `headers`,
+con la sintaxis `${VAR}` o `${VAR:-valor-por-defecto}`:
 
 ```json
 {
@@ -148,115 +184,16 @@ claude mcp add --transport stdio <nombre> --scope project -- npx -y <paquete> <f
 }
 ```
 
-**La clave real nunca se escribe en `.mcp.json`.** El archivo se commitea: va la referencia
-`${VAR}`, y el valor vive en `.env.local` (ignorado por git) o en el entorno del shell. Añade
-siempre la variable a `.env.example`, vacía, para que el resto del equipo sepa que hace falta.
-
-Los servidores de alcance de proyecto piden aprobación la primera vez que alguien abre el repo:
-es el comportamiento esperado, no un fallo.
+**La clave real nunca se escribe en `.mcp.json`.** El archivo se commitea: va la referencia `${VAR}`,
+y el valor vive en `.env.local` (ignorado por git) o en el entorno del shell. Añade siempre la
+variable a `.env.example`, vacía.
 
 ### Después de configurar
 
 - Verifica que el servidor arranca (`claude mcp list`).
-- Documenta el MCP en `docs/architecture.md` → sección "MCPs del proyecto": para qué se usa, con
-  qué alcance y qué variables necesita.
+- Documenta el MCP en `docs/architecture.md` → sección "MCPs del proyecto": para qué se usa, con qué
+  alcance y qué variables necesita.
 - Registra el cambio en `changelog/` como Configuración.
-
----
-
-## Descripción del proyecto
-
-<!-- Escribe aquí 3-4 líneas que expliquen qué es este proyecto, qué problema resuelve y para quién.
-     Ejemplo:
-     "Plataforma web para que coleccionistas de vinilos cataloguen y compartan sus colecciones.
-     Usuario objetivo: adultos 25-45 con colecciones físicas que quieren digitalizar su catálogo.
-     Stack principal: Next.js + Supabase + Vercel." -->
-
-**Nombre:** <!-- nombre-del-proyecto -->
-**Descripción:** <!-- una frase -->
-**Estado actual:** <!-- En desarrollo / Beta / Producción -->
-
----
-
-## Documentación de referencia
-
-Lee todo lo que haya en `docs/` antes de empezar a trabajar. Si algún archivo está vacío
-(solo tiene comentarios) o incompleto, pregunta al usuario para rellenarlo antes de actuar.
-
-Si un archivo de `docs/` no existe todavía, pregunta antes de asumir.
-
----
-
-## Stack tecnológico
-
-<!-- Completa esto con el stack real del proyecto.
-     Ejemplo:
-     - Framework: Next.js 14 (App Router)
-     - Base de datos: Supabase (PostgreSQL + Auth + Storage)
-     - Estilos: Tailwind CSS + shadcn/ui
-     - Despliegue: Vercel
-     - Pagos: Stripe
-     - Email: Resend -->
-
-- Framework: <!-- ... -->
-- Base de datos: <!-- ... -->
-- Estilos: <!-- ... -->
-- Despliegue: <!-- ... -->
-- Otras integraciones: <!-- ... -->
-
----
-
-## Estructura de carpetas
-
-<!-- Documenta aquí la estructura real del proyecto una vez inicializado.
-     Ejemplo:
-     src/
-     ├── app/          → rutas (App Router)
-     ├── components/   → componentes reutilizables
-     ├── lib/          → utilidades, clientes de servicios externos
-     ├── hooks/        → custom hooks
-     └── types/        → tipos TypeScript compartidos
-     
-     docs/             → documentación del proyecto (ver sección anterior)
-     changelog/        → registro de cambios (ver protocolo más abajo)
-     mejoras/          → ideas futuras no implementadas -->
-
----
-
-## Convenciones de código
-
-<!-- Define aquí las reglas de estilo específicas del proyecto.
-     Ejemplo:
-     - TypeScript estricto. No usar `any`.
-     - Componentes en PascalCase, archivos en kebab-case.
-     - Toda función async debe manejar errores explícitamente.
-     - No usar `console.log` en producción.
-     - Comentarios en español. -->
-
-- Gestor de paquetes: pnpm v11. No usar npm ni yarn.
-- Idioma de comentarios y variables: <!-- español / inglés -->
-- Nombrado de componentes: <!-- PascalCase -->
-- Nombrado de archivos: <!-- kebab-case -->
-- <!-- Añade más reglas según el proyecto -->
-
----
-
-## Qué NO hacer
-
-<!-- Lista de antipatrones específicos de este proyecto.
-     Ejemplo:
-     - No modificar el esquema de Supabase directamente desde el cliente; usar migraciones.
-     - No almacenar tokens en localStorage; usar cookies httpOnly.
-     - No crear componentes nuevos sin consultar docs/design-system.md primero.
-     - No hacer fetch directo a APIs externas desde componentes; usar server actions o route handlers. -->
-
-- No usar `npm` ni `yarn`. Siempre `pnpm` (v11).
-- No escribir claves ni tokens reales en `.mcp.json`: el archivo se commitea. Usa `${VARIABLE}` y
-  guarda el valor en `.env.local` o en el entorno del shell.
-- No instalar servidores MCP por tu cuenta: pregunta antes, según el "Protocolo de MCPs".
-- No ejecutar un `claude mcp add` copiado de una fuente que no sea el proveedor oficial, ni sin
-  haberle enseñado antes el comando al usuario.
-- <!-- ... -->
 
 ---
 
@@ -287,72 +224,67 @@ Usa `/changelog` para crear la entrada siguiendo el formato del proyecto.
 [Contexto o motivación del cambio]
 ```
 
-Si la carpeta `changelog/` no existe, créala antes de escribir el archivo.
-
-Mientras el repo siga siendo la plantilla sin inicializar (existe `.template/`), los cambios
-sobre el andamiaje se registran en `.template/changelog/`, no en `changelog/`. Así quien use la
-plantilla arranca con el changelog limpio.
-
 ### 2. Actualizar la documentación afectada
 
-Si el cambio afecta algo que está documentado en `docs/`, actualiza ese archivo en la misma sesión. No dejes documentación desincronizada.
+Si el cambio afecta algo documentado en `docs/`, actualiza ese archivo en la misma sesión. No dejes
+documentación desincronizada.
 
-Ejemplos:
-- Nueva tabla en Supabase → actualizar `docs/data-model.md`
-- Nuevo componente o patrón visual → actualizar `docs/design-system.md`
-- Cambio en la arquitectura de carpetas → actualizar `docs/architecture.md`
-- Nueva funcionalidad en scope → actualizar `docs/prd.md` y `docs/roadmap.md`
-- Nuevo servidor MCP configurado → actualizar `docs/architecture.md` (sección "MCPs del proyecto")
+- Nueva tabla o cambio de esquema → `docs/data-model.md`
+- Nuevo componente o patrón visual → `docs/design-system.md`
+- Cambio de arquitectura o de carpetas → `docs/architecture.md`
+- Nueva funcionalidad en alcance → `docs/prd.md` y `docs/roadmap.md`
+- Nuevo servidor MCP → `docs/architecture.md` (sección "MCPs del proyecto")
+- Cambio en el elenco o en su ritmo → `docs/prd.md` y `docs/design-system.md`
 
 ### 3. Actualizar README.md si aplica
 
-Si el cambio afecta cómo se instala, inicializa o usa el proyecto, actualizar `README.md`.
-
-El `README.md` describe siempre el proyecto en su estado actual. Si encuentras en él (o en
-cualquier doc) restos de la plantilla, reescríbelos en esta misma sesión.
+Si el cambio afecta cómo se instala, configura o usa el proyecto, actualízalo. El `README.md`
+describe siempre el proyecto en su estado actual — y es la cara pública del repositorio.
 
 ### 4. Revisión de seguridad
 
 Antes de mergear a producción, o cuando el usuario lo pida, ejecuta `/security-review`.
-Analiza los cambios en busca de vulnerabilidades, credenciales expuestas y problemas de seguridad.
+
+Aquí importa especialmente: la clave de servicio de Supabase, el secreto de firma de la cookie, la
+validación de los webhooks de pago y que ninguna clave acabe en el cliente.
 
 ---
 
 ## Protocolo de pull requests
 
-**El agente es quien debe crear los PRs**, no el usuario. Así la plantilla llega rellena y el checklist verificado. Para abrir un PR, dile al agente:
+**El agente es quien debe crear los PRs**, no el usuario. Así la plantilla del PR llega rellena y el
+checklist verificado. Para abrir uno, dile al agente:
 
-> "Abre un PR con estos cambios" o usa `/autopilot` para el flujo completo.
+> "Abre un PR con estos cambios"
 
-Si por algún motivo abres el PR manualmente desde GitHub, tendrás que rellenar la plantilla a mano — es el comportamiento esperado de GitHub, no un error del flujo.
+Cuando el agente crea un PR, debe rellenar `.github/pull_request_template.md` completa antes de
+enviarlo:
 
----
+1. Rellena `¿Qué se hizo?` y `Motivación` con el contexto real del cambio.
+2. Marca con `[x]` la casilla correcta en `Tipo de cambio`, con las mismas categorías que el
+   changelog.
+3. Repasa el checklist y marca **solo lo que hayas verificado de verdad**.
+4. Si un punto no aplica, dilo explícitamente en la descripción en lugar de marcarlo a ciegas o
+   dejarlo en silencio.
 
-Cuando el agente crea un PR, debe rellenar la plantilla de `.github/pull_request_template.md` completa antes de enviarlo:
-
-1. Rellena las secciones `¿Qué se hizo?` y `Motivación` con el contexto real del cambio (no dejarlo en blanco ni con el placeholder).
-2. Marca con `[x]` la casilla correcta en `Tipo de cambio`. Usa las mismas categorías que el changelog: Feature, Fix, Refactor, Migración, Documentación o Configuración.
-3. Repasa el checklist y marca con `[x]` **solo lo que hayas verificado de verdad**. Si no has hecho algo, déjalo sin marcar.
-4. Si un punto del checklist no aplica (por ejemplo, no hay nada que probar en local para un cambio puramente de markdown), indícalo explícitamente en la descripción del PR en lugar de marcarlo a ciegas o dejarlo en silencio.
-
-El checklist no es burocracia: es el último filtro para que documentación, changelog, pruebas y revisión de seguridad no se queden a medias cuando hay prisa por mergear.
+El checklist no es burocracia: es el último filtro para que documentación, changelog, pruebas y
+revisión de seguridad no se queden a medias cuando hay prisa por mergear.
 
 ---
 
 ## Registro de mejoras pendientes
 
-Las ideas de mejora que no entran en el sprint actual se anotan en `mejoras/`.
-
-Usa `/mejora` para añadir una entrada al backlog sin interrumpir el flujo de trabajo.
-
-**Formato sugerido:** un archivo Markdown por área temática o un único `mejoras/backlog.md`.
-**Contenido mínimo por idea:** título, descripción breve, motivación, prioridad estimada.
-
-Si la carpeta `mejoras/` no existe, créala.
+Las ideas que no entran en el sprint actual se anotan en `mejoras/backlog.md`. Usa `/mejora` para
+añadir una entrada sin interrumpir el flujo de trabajo.
 
 ---
 
 ## Notas adicionales
 
-<!-- Cualquier otra instrucción específica del proyecto que no encaje en las secciones anteriores.
-     Ejemplos: credenciales de entorno necesarias, comandos de desarrollo, quirks conocidos del stack. -->
+- **Fase 0 va primero.** Antes de montar proyecto, componentes o pasarela: escribir los prompts del
+  elenco y conversar con ellos veinte mensajes desde un script de terminal. Si los personajes no
+  tienen gracia sostenida, no hay producto, y el resto del trabajo sería en balde. Ver
+  `docs/roadmap.md`.
+- **La salvaguarda es bloqueante para lanzar.** No se despliega la web de pago sin ella.
+- El coste por conversación es de céntimos: no optimices el gasto de API a costa de la calidad del
+  ritmo o del tono. Los números están en `docs/business.md`.

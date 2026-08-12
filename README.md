@@ -1,82 +1,139 @@
-# project-template
+# Palmaditas
 
-Plantilla para empezar proyectos cuando trabajas con agentes de código (Claude Code, Cursor y compañía) sin que se pongan a escribir antes de entender qué estás construyendo.
+Un grupo de chat donde cuatro personajes se emocionan con tu idea.
 
----
-
-## ¿Qué es esto?
-
-Una plantilla de repositorio que impone un protocolo simple: **antes de tocar código, el agente lee la documentación del proyecto**.
-
-Si los documentos están vacíos, empieza haciendo preguntas — no escribiendo código. Si están rellenos, arranca con todo el contexto cargado y sin tener que volver a explicárselo en cada sesión.
-
-Es agnóstica al stack. El protocolo funciona igual con Next.js, Astro, FastAPI o cualquier otra cosa que decidas usar.
+> ⚠️ **Estado: en diseño. Todavía no hay código.** La documentación de producto, arquitectura y
+> diseño está completa en [`docs/`](./docs); la implementación arranca ahora. Las instrucciones de
+> instalación de más abajo describen cómo funcionará, no cómo funciona hoy.
 
 ---
 
-## ¿Para quién es?
+## Qué es esto
 
-- Founders y equipos pequeños que construyen productos con ayuda de agentes de IA y quieren reducir el rework.
-- Cualquiera que se haya cansado de explicarle al modelo el mismo contexto en cada conversación nueva.
+Tienes una idea. La sueltas en el grupo de amigos. Lo que vuelve son pegas.
 
----
+A veces las pegas están bien. Y a veces solo querías que alguien se emocionara contigo cinco
+minutos, antes de ponerte a pensar si la idea aguanta. **Palmaditas es ese sitio.**
 
-## ¿Qué hay dentro?
+Escribes tu idea y te responde un grupo de chat con cuatro personajes:
 
-- **`CLAUDE.md`** — Contrato de entrada para el agente. Define qué leer, cómo registrar cambios, cómo configurar los MCPs del stack, qué no hacer y cuándo ejecutar revisiones de seguridad.
-- **`docs/`** — Ocho archivos vivos que capturan las decisiones que típicamente se pierden entre conversaciones: producto, arquitectura, modelo de datos, design system, business, roadmap, flujos de usuario y testing.
-- **`changelog/`** — Registro estructurado de cada cambio importante: qué, cuándo y por qué. **Llega vacío**: solo con el archivo que explica el formato.
-- **`mejoras/`** — Backlog de ideas que no entran en el sprint actual pero no se quieren perder.
-- **`.claude/`** — Configuración de Claude Code con permisos sensatos y slash commands custom para no tener que recordar el protocolo de memoria.
-- **`.github/`** — Plantillas de pull request e issues alineadas con el protocolo.
-- **`.template/`** — Historial de la plantilla en sí. Se borra al inicializar tu proyecto, así no arrastras cambios que no son tuyos.
-- Lo aburrido pero necesario: `.gitignore`, `.env.example`, `LICENSE`.
+| | |
+|---|---|
+| **Rosa** | Entusiasmo sin filtro. Contesta antes de terminar de leer |
+| **Nacho** | Ya te ve levantando una ronda y saliendo a bolsa |
+| **Bego** | Aporta estadísticas espectaculares y absolutamente inventadas |
+| **Iván** | El único que pone una pega. Los otros tres se le echan encima |
 
----
+Iván es la clave. Sin él son cuatro personas de acuerdo, y eso aburre en tres mensajes. Con él el
+chiste tiene dos capas: no solo te dan la razón, es que **defienden tu idea del único que se atreve
+a cuestionarla**. Y de paso, si su pega es buena, te la llevas gratis.
 
-## ¿Cómo funciona el protocolo?
-
-1. **Cualquier sesión empieza leyendo `docs/`.** Si están vacíos o incompletos, el agente pregunta antes de actuar.
-2. **Cada cambio importante deja registro en `changelog/`** con qué se hizo, qué se modificó y por qué.
-3. **Si el cambio afecta a algo documentado, se actualiza el doc en la misma sesión.** No hay documentación desincronizada.
-4. **Con el stack ya decidido, el agente pregunta qué MCPs quieres** y con qué alcance: los globales que ya tengas, o servidores configurados a nivel de proyecto en `.mcp.json`. No instala nada por su cuenta ni antes de que haya stack.
-5. **Antes de mergear a producción**, se ejecuta `/security-review` para detectar vulnerabilidades, credenciales filtradas y problemas comunes.
-6. **Las ideas que no entran ahora se anotan en `mejoras/`** sin interrumpir el flujo actual.
+Es humor. Nada de lo que dicen los personajes es información real, y el producto lo dice
+abiertamente. No es un asesor.
 
 ---
 
-## ¿Cómo empezar?
+## Dos formas de usarlo
 
-1. Usa este repo como plantilla en GitHub (botón **"Use this template"**) o clónalo directamente.
-2. Abre el proyecto en Claude Code, Cursor o el agente que prefieras.
-3. Cuando el agente lea `CLAUDE.md` por primera vez, te preguntará qué quieres construir y para quién. Responde y deja que vaya completando los docs contigo, uno a uno.
-4. Con los docs rellenos, el agente **inicializa el proyecto**: reescribe este README para tu producto, rellena los datos de `CLAUDE.md`, ajusta la licencia y `.env.example`, borra `.template/` y deja el changelog con su primera entrada real. Lo hace solo; si quieres forzarlo, usa `/init-proyecto`.
-5. A partir de ahí, arranca el desarrollo. Cada sesión nueva entra ya con todo el contexto cargado.
+**Pagando**, en [palmaditas.com](https://palmaditas.com): sin registro, sin cuenta. Pagas, escribes.
 
----
-
-## Convenciones
-
-- Gestor de paquetes: **pnpm v11** (no npm, no yarn).
-- El resto de convenciones (idioma, naming, estilo) se decide al rellenar `CLAUDE.md` y `docs/architecture.md`.
+**Gratis**, clonando este repositorio y ejecutándolo con tu propia clave de API. Misma experiencia,
+sin pasarela de pago. Los prompts del elenco están en `src/lib/elenco/`, a la vista — son el
+producto y no tiene sentido esconderlos en un repo abierto.
 
 ---
 
-## Adaptar para tu proyecto
+## Requisitos previos
 
-No tienes que hacerlo a mano: el agente lo hace en la inicialización, siguiendo el checklist de la sección "Inicialización del proyecto" de `CLAUDE.md`. Lo que cambia:
+- **Node.js 20+**
+- **pnpm v11** (no npm, no yarn)
+- Una **clave de API de Anthropic** ([console.anthropic.com](https://console.anthropic.com))
 
-| Archivo | Qué pasa con él |
-|---------|-----------------|
-| `README.md` | Se reescribe entero para tu producto (este texto desaparece) |
-| `CLAUDE.md` | Se rellenan nombre, stack, estructura y convenciones |
-| `LICENSE` | Se sustituyen `[YEAR]` y `[AUTHOR]` |
-| `.env.example` | Se queda solo con las variables de tu stack |
-| `changelog/` | Recibe la primera entrada real del proyecto |
-| `mejoras/backlog.md` | Se limpia el ejemplo |
-| `.template/` | Se borra |
+---
 
-El criterio es simple: cuando termina la inicialización, **ningún archivo del repo se describe a sí mismo como plantilla**. Todo habla de tu proyecto.
+## Instalación y desarrollo
+
+```bash
+pnpm install
+```
+
+```bash
+cp .env.example .env.local
+```
+
+Pon tu `ANTHROPIC_API_KEY` en `.env.local` y arranca:
+
+```bash
+pnpm dev
+```
+
+Sin configuración de pasarela de pago, el proyecto arranca en modo libre: sin saldo, sin base de
+datos y sin límite de mensajes. Consume directamente de tu clave.
+
+### Variables de entorno
+
+Están todas en [`.env.example`](./.env.example). Solo una es obligatoria para uso local:
+`ANTHROPIC_API_KEY`. El resto solo hacen falta para desplegar la versión de pago.
+
+---
+
+## Estructura
+
+```
+docs/                 → Documentación viva del proyecto. Empieza por aquí
+src/
+├── app/              → Rutas y route handlers (Next.js App Router)
+├── components/chat/  → Burbujas, cabecera, fondo
+├── lib/
+│   ├── elenco/       → Los prompts de los personajes. El corazón del producto
+│   ├── salvaguarda/  → Clasificador de mensajes sensibles
+│   ├── saldo/        → Sesión anónima y descuento de mensajes
+│   └── pago/         → Adaptador de pasarela
+changelog/            → Registro de cambios importantes
+mejoras/              → Ideas que no entran ahora
+```
+
+Si vienes a cotillear el código, `src/lib/elenco/` es lo que buscas.
+
+---
+
+## Cómo está construido
+
+Next.js (App Router) sobre Vercel, con Tailwind, shadcn/ui y AI Elements para la interfaz de chat.
+Las respuestas las genera **Claude Haiku 4.5** en una sola llamada por tanda: los cuatro mensajes
+salen juntos, que es más barato y hace que los personajes se contesten entre ellos con naturalidad.
+
+Interfaz clonada descaradamente de una app de mensajería que ya conoces, con el fondo de garabatos
+dibujado por nosotros. El detalle: la cabecera dice **"Rosa y Bego están escribiendo…"**, y eso
+comunica que hay un grupo entero pendiente de ti mejor que cualquier animación.
+
+Los detalles, en [`docs/architecture.md`](./docs/architecture.md).
+
+---
+
+## Una cosa que no es negociable
+
+El producto está diseñado para aplaudir cualquier cosa que escribas. La mayoría de las veces eso es
+una idea de negocio regular y la coña funciona. Pero alguien, en algún momento, va a escribir ahí
+algo que no es una idea: que está fatal, una crisis personal, un duelo.
+
+**Cuatro personajes aplaudiendo con emojis en ese momento sería desagradable.** Por eso hay un
+clasificador que revisa cada mensaje antes de que el grupo responda; cuando salta, el grupo no
+contesta, aparece un mensaje del sistema y **no se descuenta saldo**.
+
+Está en [`docs/architecture.md`](./docs/architecture.md) y es bloqueante para lanzar. Si tocas esa
+parte, léelo antes.
+
+---
+
+## Contribuir
+
+Antes de tocar nada, lee [`CLAUDE.md`](./CLAUDE.md) y la documentación de [`docs/`](./docs). El
+proyecto sigue un protocolo simple: cada cambio importante deja entrada en `changelog/` y actualiza
+la documentación afectada en la misma sesión.
+
+Los issues y las ideas para el elenco son bienvenidos. Si se te ocurre un personaje mejor que
+Quique para desbloquear, cuéntalo.
 
 ---
 

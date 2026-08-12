@@ -1,65 +1,130 @@
 # Modelo de negocio
 
-<!-- Contexto comercial del proyecto. Útil para que el agente entienda las restricciones
-     y prioridades de negocio que afectan a las decisiones técnicas.
-     Actualizar si cambia el modelo de monetización, el pricing o la estrategia. -->
-
 ---
 
 ## Propuesta de valor
 
-<!-- Una frase. Qué hace el producto y para quién, de forma que justifique su existencia.
-     Ejemplo: "Permite a coleccionistas de vinilos catalogar y compartir su colección
-     sin depender de servicios de terceros que pueden desaparecer." -->
+Un grupo de chat donde cuatro personajes se emocionan con tu idea antes de que empiece la fase de
+pegas — y donde el único que se atreve a criticarla acaba enterrado por los otros tres.
+
+El producto se distribuye por dos vías que se refuerzan: **el repositorio público**, que cualquiera
+puede ejecutar gratis con su propia clave de API y que funciona como carta de presentación, y
+**palmaditas.com**, para quien no quiere montarse nada y prefiere pagar unos euros y escribir.
+
+No es un negocio serio y no pretende serlo. El objetivo realista es que se sostenga solo, no que dé
+de comer.
 
 ---
 
 ## Modelo de monetización
 
-<!-- Describe cómo genera dinero el proyecto (o cómo lo hará).
-     Si es gratuito, explica por qué y qué sostenibilidad tiene.
-     Opciones comunes: gratis, freemium, pago único, suscripción mensual/anual, por uso, Ko-fi/donaciones.
-     
-     Detalla:
-     - Qué incluye cada tier si hay varios
-     - Precio o rango de precio objetivo
-     - Pasarela de pago utilizada -->
+**Pago único que acredita un número de mensajes a una sesión anónima.** Sin suscripción, sin
+cuentas, sin prueba gratuita.
+
+| | |
+|---|---|
+| **Qué se compra** | Un paquete de mensajes. Un mensaje = un envío tuyo al grupo, que dispara la tanda de respuestas de los cuatro personajes |
+| **Precio de partida** | 5 € por 100 mensajes |
+| **Recarga** | Mismo paquete, sin perder la conversación en curso |
+| **Pasarela** | **Sin decidir.** No bloquea el desarrollo — ver más abajo |
+| **Alternativa gratuita** | Clonar el repositorio y poner tu propia clave de API |
+
+### Por qué 100 mensajes por 5 €
+
+Porque el coste real es ínfimo y el precio no está puesto para cubrir la API, sino para que la
+cifra suene generosa y quite de la cabeza la idea de racionar. Los números, con Haiku 4.5
+($1 por millón de tokens de entrada, $5 de salida):
+
+| Concepto | Estimación |
+|---|---|
+| Entrada por tanda (prompt del elenco + historial) | ~1.900 tokens |
+| Salida por tanda (mensajes cortos de cuatro personajes) | ~320 tokens |
+| **Coste por mensaje del usuario** | **~0,0035 $** |
+| Coste de una conversación completa de 20 mensajes | ~0,07 $ |
+| Coste de agotar un paquete de 100 mensajes | **~0,35 $** |
+
+Sobre 5 € de ingreso, el coste de API de un paquete completamente consumido ronda el 7 %. El resto
+se lo lleva la comisión de la pasarela, el IVA según el proveedor que elijamos, y el margen. **El
+riesgo de que un usuario dispare la factura no existe a esta escala** — para gastar 5 € de API
+tendría que enviar unos 1.400 mensajes.
+
+Dos supuestos importantes detrás de esos números, ambos a validar midiendo antes de fijar el precio
+definitivo:
+
+1. **Una sola llamada a la API por tanda, no cuatro.** Generar los cuatro mensajes en una única
+   llamada cuesta cerca de un tercio que hacer una llamada por personaje, porque el historial se
+   envía una vez en lugar de cuatro. Y además sale mejor: el modelo ve todo el intercambio a la vez,
+   así que los personajes se contestan entre ellos con más naturalidad. Es la decisión que hace que
+   los números salgan; queda registrada en `architecture.md`.
+2. **No contamos con la caché de prompt.** Haiku 4.5 exige un prefijo de al menos 4.096 tokens para
+   cachear, y nuestro prompt no llega ni de lejos. Los números de arriba son sin descuento por
+   caché: si el elenco crece y el prompt supera ese umbral, mejorarán solos.
+
+### La pasarela: decisión aplazada a propósito
+
+El mecanismo es idéntico en todas: pago confirmado → webhook → el servidor acredita N mensajes a un
+identificador de sesión. Lo que cambia entre proveedores no es la técnica, es la fricción del alta y
+quién asume el IVA de servicios digitales en la UE:
+
+| Opción | A favor | En contra |
+|---|---|---|
+| **Stripe** | El estándar, alta directa, integración sencilla | El IVA de servicios digitales es nuestro |
+| **Lemon Squeezy / Paddle** | *Merchant of record*: se ponen ellos como vendedor y gestionan el IVA | Verificación de la aplicación más pesada al dar de alta |
+| **Buy Me a Coffee** | Encaja con el tono, permite donaciones repetidas | **Sin verificar**: hay que confirmar en su documentación oficial si el webhook permite vincular la donación a la sesión con la limpieza necesaria |
+
+Se construye con un adaptador de pago y se enchufa el proveedor cuando esté decidido. La decisión
+fiscal es del propietario del proyecto, no técnica.
 
 ---
 
 ## Competidores y diferenciación
 
-<!-- Lista de alternativas existentes y en qué se diferencia este producto.
-     No hace falta ser exhaustivo; solo los competidores relevantes.
-     
-     | Competidor | Qué hace | Diferencia nuestra |
-     |------------|----------|---------------------|
-     | ... | ... | ... | -->
+| Competidor | Qué hace | Diferencia nuestra |
+|------------|----------|---------------------|
+| Cualquier asistente de IA generalista | Te da feedback equilibrado si se lo pides | Aquí el sesgo es el producto, es explícito, y viene con personajes |
+| Apps de afirmaciones y motivación | Frases positivas genéricas, sin interacción | Esto reacciona a *tu* idea concreta, en formato conversación |
+| El grupo de WhatsApp de tus amigos | Gratis, real, y ahí está el problema | Este grupo está de tu parte por diseño |
+
+La diferenciación real no es funcional, es de **tono y formato**: nadie más está haciendo un grupo
+de chat satírico con elenco fijo, en español, y con el código publicado.
 
 ---
 
 ## Métricas de éxito
 
-<!-- Qué significa que el producto "funciona". Con valores objetivo si es posible.
-     Ejemplo:
-     - 100 usuarios activos mensuales en los primeros 3 meses
-     - Tasa de retención semana 4 > 40%
-     - NPS > 30 -->
+Para un producto de esta naturaleza, la métrica que importa es la difusión, no la conversión.
+
+| Métrica | Objetivo | Por qué |
+|---|---|---|
+| Estrellas y forks del repositorio | El indicador principal | El repo es la carta de presentación y la vía de difusión |
+| Capturas compartidas en redes | Cualquier señal cuenta | Es el motor de adquisición del producto |
+| Conversaciones que pasan de 10 mensajes | > 40 % de las iniciadas | Mide si el elenco aguanta o se agota. **Si esto falla, el problema es el elenco** |
+| Ingresos | Que cubran dominio + alojamiento + API | El listón es la autosuficiencia, no el beneficio |
 
 ---
 
 ## Riesgos identificados
 
-<!-- Riesgos técnicos, de mercado o de negocio, con mitigación propuesta.
-     Ejemplo:
-     | Riesgo | Probabilidad | Impacto | Mitigación |
-     |--------|-------------|---------|------------|
-     | Dependencia de API de tercero sin SLA | Media | Alto | Capa de abstracción con fallback |
--->
+| Riesgo | Probabilidad | Impacto | Mitigación |
+|--------|-------------|---------|------------|
+| **El chat se agota tras unos pocos mensajes** | Media | Alto | Iván y el conflicto interno del grupo son la mitigación de diseño. Se mide con la métrica de conversaciones que pasan de 10 mensajes |
+| **Alguien escribe algo personal serio y el grupo aplaude** | Baja, pero llegará | Alto | Es el riesgo real del producto. Requiere una comprobación antes de que el grupo responda; se dimensiona en `architecture.md` y no se lanza sin ello |
+| Los datos inventados de Bego se toman en serio | Baja | Medio | Absurdos por diseño, más aviso permanente en la interfaz y en el README |
+| Se toma como asesoramiento real de negocio | Baja | Medio | El elenco tiene prohibido dar consejo financiero, legal o de salud |
+| El usuario pierde su saldo al borrar cookies | Media | Bajo | Enlace de recuperación por email tras el pago |
+| Subida de precios o cambio en la API del modelo | Baja | Bajo | El coste por conversación es tan bajo que hay margen de sobra |
+| Nadie paga porque el repo es gratis | **Alta** | Bajo | Es el modelo, no un fallo. Quien sabe clonar un repo y gestionar una clave de API no era el cliente de pago |
 
 ---
 
 ## Restricciones
 
-<!-- Restricciones conocidas que condicionan las decisiones.
-     Presupuesto, tiempo, regulación, tecnología impuesta, etc. -->
+- **Presupuesto:** el mínimo. Dominio ya comprado (palmaditas.com); todo lo demás debe caber en
+  planes gratuitos o de coste marginal hasta que haya ingresos.
+- **Tiempo:** proyecto secundario. La arquitectura debe favorecer el mantenimiento cero: sin
+  servidores que vigilar, sin operativa manual, sin trabajo recurrente.
+- **Fiscal:** al cobrar por un servicio digital en la UE hay obligaciones de IVA. La elección de
+  pasarela depende de esa decisión, que es del propietario del proyecto y conviene consultar con un
+  asesor. No bloquea el desarrollo.
+- **Idioma:** el producto es en español y el humor depende de que suene a grupo de WhatsApp español.
+  Traducirlo no es trivial y queda fuera de esta versión.
