@@ -5,6 +5,8 @@
  * Modo claro es la identidad; el oscuro llegará después.
  */
 @theme {
+  /* La web es blanca; el beige queda solo para el chat, que así destaca. */
+  --color-pagina: #ffffff;
   --color-fondo: #efe7de;
   --color-garabato: #d8cec3;
   --color-entrante: #ffffff;
@@ -35,7 +37,7 @@ body {
 body {
   font-family: var(--font-chat);
   color: var(--color-texto);
-  background: var(--color-fondo);
+  background: var(--color-pagina);
   -webkit-font-smoothing: antialiased;
 }
 

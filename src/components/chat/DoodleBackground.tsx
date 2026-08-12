@@ -1,42 +1,69 @@
 /**
- * Patrón de fondo del chat.
+ * Patrón de fondo del chat: manos abiertas y destellos de aplauso.
  *
  * Dibujado por nosotros. El fondo de garabatos de WhatsApp es un asset suyo con
  * derechos, así que clonamos el efecto —motivos monocromos a baja opacidad— con
- * nuestros propios motivos: manos aplaudiendo, palmas y confeti. Igual de
- * reconocible, propio, y encima es un chiste más. Ver docs/design-system.md.
+ * nuestro propio motivo. Ver docs/design-system.md.
+ *
+ * Una mano por motivo, no dos superpuestas: a esta opacidad, dos manos rotadas
+ * se funden en una mancha y dejan de leerse.
  */
+
+/** Mano abierta: cuatro dedos en abanico sobre la palma. */
+function Mano() {
+  return (
+    <g>
+      <path d="M4 34L9 12" />
+      <path d="M11 35L16 10" />
+      <path d="M18 35L25 12" />
+      <path d="M25 34L31 17" />
+      <path d="M2 33c-2 12 6 20 17 18s14-11 12-19" />
+    </g>
+  )
+}
+
+/** Rayitas de impacto. */
+function Destello() {
+  return (
+    <g>
+      <path d="M14 0v10" />
+      <path d="M0 5l7 7" />
+      <path d="M28 5l-7 7" />
+    </g>
+  )
+}
+
 export function DoodleBackground() {
   return (
     <svg
       aria-hidden
       className="pointer-events-none absolute inset-0 h-full w-full"
-      style={{ color: 'var(--color-garabato)', opacity: 0.35 }}
+      style={{ color: 'var(--color-garabato)', opacity: 0.45 }}
     >
       <defs>
-        <pattern id="palmaditas" width="120" height="120" patternUnits="userSpaceOnUse">
-          <g fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
-            {/* Dos manos aplaudiendo */}
-            <path d="M18 34c-3-4-2-9 2-11l7 8" />
-            <path d="M24 26c-2-4 0-8 4-9l6 10" />
-            <path d="M40 34c3-4 2-9-2-11l-7 8" />
-            <path d="M34 26c2-4 0-8-4-9l-6 10" />
-            <path d="M20 36c2 6 8 9 14 8s8-6 6-10" />
-            {/* Rayitas de impacto */}
-            <path d="M14 18l-4-4M30 12v-5M46 18l4-4" />
+        <pattern id="palmaditas" width="160" height="160" patternUnits="userSpaceOnUse">
+          <g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <g transform="translate(18 26) rotate(-18 17 27)">
+              <Mano />
+            </g>
+            <g transform="translate(22 8)">
+              <Destello />
+            </g>
 
-            {/* Palma abierta */}
-            <path d="M84 44V30M90 44V27M96 44v-14M78 46v-9" />
-            <path d="M76 44c0 8 5 13 12 13s12-5 12-13v-4" />
+            <g transform="translate(104 96) rotate(18 17 27)">
+              <Mano />
+            </g>
+            <g transform="translate(108 78)">
+              <Destello />
+            </g>
 
-            {/* Confeti */}
-            <path d="M62 76l3-4M68 84l4 2M56 90l-3 3" />
-            <path d="M100 92l3-3M94 100l-2 4" />
+            <g transform="translate(112 20) scale(0.62) rotate(24 17 27)">
+              <Mano />
+            </g>
 
-            {/* Segunda mano, desplazada para romper la retícula */}
-            <path d="M26 96c-3-4-2-9 2-11l7 8" />
-            <path d="M48 96c3-4 2-9-2-11l-7 8" />
-            <path d="M28 98c2 6 8 9 14 8s8-6 6-10" />
+            <g transform="translate(24 108) scale(0.62) rotate(-24 17 27)">
+              <Mano />
+            </g>
           </g>
         </pattern>
       </defs>
