@@ -80,7 +80,7 @@ primero cuando lo clone. Se escribe pensando en que se lee.
 atado a un identificador anónimo:
 
 1. Al pagar, el webhook genera un identificador aleatorio largo (`crypto.randomUUID()` o similar) y
-   crea una fila: `id_sesion`, `mensajes_restantes`, `creado_en`.
+   crea una fila: `id_sesion`, `saldo_micros`, `creado_en`.
 2. Ese identificador viaja al navegador en una **cookie firmada, `httpOnly`, `Secure`,
    `SameSite=Lax`**. No es legible desde JavaScript.
 3. Cada envío, el route handler lee la cookie, busca la fila, comprueba que hay saldo suficiente,

@@ -60,7 +60,7 @@ contradice la privacidad del producto.
 erDiagram
   sesiones {
     uuid id PK
-    integer mensajes_restantes
+    bigint saldo_micros
     text email
     text referencia_pago UK
     timestamptz creado_en
@@ -132,7 +132,7 @@ respuesta.
 **Los mensajes comprados no caducan.** Se han pagado; expirarlos sería quedarse con dinero por algo
 no entregado.
 
-La limpieza se limita a las sesiones agotadas: se borran las filas con `mensajes_restantes = 0` y
+La limpieza se limita a las sesiones agotadas: se borran las filas con `saldo_micros <= 0` y
 `ultimo_uso_en` de hace más de 90 días. Tarea programada (`pg_cron`), sin operativa manual.
 
 ---
