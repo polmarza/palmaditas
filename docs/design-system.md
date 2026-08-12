@@ -155,34 +155,47 @@ esa línea sola comunica que hay un grupo entero pendiente de ti mejor que cualq
 | Velocidad de escritura | Distinta por personaje |
 | Scroll | Anclado al último mensaje; se suelta si el usuario sube a leer |
 
-**Ritmo por personaje.** Esto es carácter, no configuración: el timing refuerza la personalidad.
+### El orden lo manda el modelo, no el ritmo
 
-| Personaje | Antes de escribir | Velocidad | Efecto buscado |
-|-----------|-------------------|-----------|----------------|
-| **Rosa** | Casi inmediata | Rápida | Contesta antes de terminar de leer |
-| **Nacho** | Media | Media | Está redactando algo que le parece importante |
-| **Bego** | Larga | Rápida | Ha estado "buscando el dato" y lo suelta de golpe |
-| **Iván** | La más larga | Lenta | Se lo ha pensado. Y aun así lo dice |
+**Regla principal: el orquestador nunca reordena una tanda.** El modelo devuelve los mensajes en un
+orden que ha elegido según la conversación —a veces Iván abre porque está contestando a algo
+concreto— y ese orden es mejor que cualquier tabla que podamos escribir aquí. El ritmo solo pone el
+tiempo de cada mensaje **en la posición que ya tiene**.
 
-### Los retardos corren en paralelo, no en cadena
+Un diseño anterior asignaba a cada personaje un retardo fijo desde el mensaje del usuario, lo que en
+la práctica imponía el orden Rosa → Nacho → Bego → Iván en todas las tandas. Dos problemas: el chat
+se veía siempre igual, y machacaba decisiones del modelo que tenían sentido. Descartado.
 
-**Cada retardo se mide desde el mensaje del usuario, no desde el mensaje anterior del grupo.** Los
-cuatro empiezan a teclear más o menos a la vez, cada uno a su ritmo, y sus mensajes llegan cuando
-llegan. Así se comporta un grupo de verdad, y así Iván sigue siendo el último y el más lento sin
-arrastrar a nadie.
+### Cómo se calcula el tiempo de cada mensaje
 
-Encadenarlos —esperar a que Rosa termine para que Nacho empiece— parece más ordenado y es un error:
-con seis mensajes, una tanda tardaría veinte o treinta segundos en desplegarse. Nadie espera eso
-mirando una pantalla.
+Cada mensaje aparece cuando termina el anterior, más su pausa, más lo que tarde en teclearse:
 
-**Techo de duración:** una tanda completa no debe pasar de unos **10 segundos** desde el envío del
-usuario hasta el último mensaje. Si los retardos y las velocidades de un caso concreto se pasan de
-ahí, se comprimen proporcionalmente conservando el orden y las diferencias relativas — el orden es
-lo que comunica carácter, no los milisegundos exactos.
+```
+aparición(n) = aparición(n-1) + pausa + longitud(texto) × velocidad
+```
 
-Nunca aparecen los cuatro de golpe ni todos en cada tanda: hablan dos o tres, y no siempre los
-mismos. Un grupo que contesta en pleno y al unísono no cuela — y esto es tan responsabilidad del
-prompt del elenco como del orquestador de ritmo.
+| Personaje | Pausa antes de teclear | Velocidad | Carácter que comunica |
+|-----------|------------------------|-----------|------------------------|
+| **Rosa** | 250–800 ms | 18 ms/car | Contesta antes de terminar de leer, y teclea rápido |
+| **Nacho** | 800–1800 ms | 30 ms/car | Redacta con calma algo que le parece importante |
+| **Bego** | 1100–2400 ms | 16 ms/car | Se toma su tiempo buscando el dato y lo suelta de golpe |
+| **Iván** | 1400–3000 ms | 45 ms/car | Se lo piensa antes de arrancar y teclea despacio |
+
+Tres reglas que hacen que esto se sienta real:
+
+- **La duración de escritura sale de la longitud del texto**, no del personaje. Si Iván escribe
+  "vale, me atrapaste", aparece rápido: son cuatro palabras. Un retardo fijo por personaje haría que
+  tres palabras tardasen lo mismo que tres frases, y eso se nota.
+- **Mensajes seguidos del mismo personaje casi no tienen pausa** (150–450 ms): está escribiendo del
+  tirón, no volviendo a pensárselo. Es lo que hace Rosa cuando suelta tres de golpe.
+- **Topes:** ningún mensaje tarda más de **3,5 s** en teclearse por largo que sea, y una tanda
+  completa no pasa de **10 s**. Si se pasa, se comprime todo proporcionalmente conservando el orden
+  y las diferencias relativas — lo que comunica carácter es que Iván teclee más despacio que Rosa,
+  no los milisegundos exactos.
+
+Nunca aparecen todos de golpe ni todos en cada tanda: hablan dos o tres, y no siempre los mismos. Un
+grupo que contesta en pleno y al unísono no cuela — y eso es tan responsabilidad del prompt del
+elenco como del orquestador de ritmo.
 
 **`prefers-reduced-motion`:** desactiva la entrada de burbujas y el pulso del indicador, **pero no
 los retardos**. El escalonado no es una animación, es la conversación: quitarlo no lo hace
