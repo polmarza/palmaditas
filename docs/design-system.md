@@ -164,8 +164,25 @@ esa línea sola comunica que hay un grupo entero pendiente de ti mejor que cualq
 | **Bego** | Larga | Rápida | Ha estado "buscando el dato" y lo suelta de golpe |
 | **Iván** | La más larga | Lenta | Se lo ha pensado. Y aun así lo dice |
 
-Nunca empiezan a escribir los cuatro a la vez: se solapan de forma escalonada, y a veces uno no
-interviene. Un grupo que contesta al unísono no cuela.
+### Los retardos corren en paralelo, no en cadena
+
+**Cada retardo se mide desde el mensaje del usuario, no desde el mensaje anterior del grupo.** Los
+cuatro empiezan a teclear más o menos a la vez, cada uno a su ritmo, y sus mensajes llegan cuando
+llegan. Así se comporta un grupo de verdad, y así Iván sigue siendo el último y el más lento sin
+arrastrar a nadie.
+
+Encadenarlos —esperar a que Rosa termine para que Nacho empiece— parece más ordenado y es un error:
+con seis mensajes, una tanda tardaría veinte o treinta segundos en desplegarse. Nadie espera eso
+mirando una pantalla.
+
+**Techo de duración:** una tanda completa no debe pasar de unos **10 segundos** desde el envío del
+usuario hasta el último mensaje. Si los retardos y las velocidades de un caso concreto se pasan de
+ahí, se comprimen proporcionalmente conservando el orden y las diferencias relativas — el orden es
+lo que comunica carácter, no los milisegundos exactos.
+
+Nunca aparecen los cuatro de golpe ni todos en cada tanda: hablan dos o tres, y no siempre los
+mismos. Un grupo que contesta en pleno y al unísono no cuela — y esto es tan responsabilidad del
+prompt del elenco como del orquestador de ritmo.
 
 **`prefers-reduced-motion`:** desactiva la entrada de burbujas y el pulso del indicador, **pero no
 los retardos**. El escalonado no es una animación, es la conversación: quitarlo no lo hace

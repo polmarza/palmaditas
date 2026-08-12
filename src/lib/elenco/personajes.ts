@@ -18,7 +18,14 @@ export interface Personaje {
   color: string
   /** Color ANSI para el script de terminal. */
   ansi: string
-  /** Milisegundos antes de empezar a escribir, tras el mensaje anterior. */
+  /**
+   * Milisegundos antes de empezar a escribir, medidos **desde el mensaje del
+   * usuario** — no desde el mensaje anterior del grupo.
+   *
+   * Corren en paralelo: los cuatro empiezan a teclear a la vez y llegan cuando
+   * llegan. Encadenarlos haría que una tanda de seis mensajes tardase medio
+   * minuto en desplegarse.
+   */
   retardo: [min: number, max: number]
   /** Milisegundos por carácter al "escribir". */
   velocidad: number
