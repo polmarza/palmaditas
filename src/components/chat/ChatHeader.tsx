@@ -24,16 +24,15 @@ export function ChatHeader({ tecleando }: Props) {
         : `${nombres.slice(0, -1).join(', ')} y ${nombres.at(-1)} están escribiendo…`
 
   return (
-    <header className="sticky top-0 z-10 flex items-center gap-3 bg-barra px-3 py-2">
-      <img src="/favicon.svg" alt="" className="h-10 w-10 rounded-full" />
-      <div className="min-w-0">
-        <div className="text-[16px] font-medium leading-tight">Palmaditas</div>
-        <div className="truncate text-[13px] text-texto-suave">
-          {nombres.length > 0 ? (
-            <span className="text-acento">{estado}</span>
-          ) : (
-            estado
-          )}
+    <header className="sticky top-0 z-10 bg-barra px-3 py-2">
+      {/* Alineada con la columna de mensajes, no a ancho completo. */}
+      <div className="mx-auto flex max-w-[680px] items-center gap-3">
+        <img src="/favicon.svg" alt="" className="h-10 w-10 rounded-full" />
+        <div className="min-w-0">
+          <div className="text-[16px] font-medium leading-tight">Palmaditas</div>
+          <div className="truncate text-[13px] text-texto-suave">
+            {nombres.length > 0 ? <span className="text-acento">{estado}</span> : estado}
+          </div>
         </div>
       </div>
     </header>

@@ -157,12 +157,17 @@ export function Chat() {
       <main className="relative flex-1 overflow-y-auto py-3">
         <div className="mx-auto flex max-w-[680px] flex-col gap-[3px]">
           {visibles.length === 0 && (
-            <p className="burbuja mx-auto mt-4 max-w-[320px] rounded-lg bg-entrante px-4 py-3 text-center text-[13px] leading-relaxed text-texto-suave">
-              Cuéntales una idea. Cualquiera.
-              <br />
-              Escribe <span className="font-medium text-bego">@Bego</span> —o a quien quieras— para
-              hablar solo con esa persona y que te busque datos de verdad.
-            </p>
+            <div className="burbuja mx-auto mt-4 flex max-w-[330px] flex-col gap-2 rounded-lg bg-entrante px-4 py-3 text-center text-[13px] leading-relaxed text-texto-suave">
+              <p>Cuéntales una idea. Cualquiera.</p>
+              <p>
+                Escribe <span className="font-medium text-bego">@Bego</span> —o a quien quieras— para
+                hablar solo con esa persona y que te busque datos de verdad.
+              </p>
+              <p>
+                Es humor: el grupo está de tu parte por diseño. Solo los mensajes con enlace llevan
+                datos comprobados.
+              </p>
+            </div>
           )}
 
           {visibles.map((mensaje, indice) =>
@@ -216,10 +221,6 @@ export function Chat() {
             </svg>
           </button>
         </div>
-        <p className="mx-auto mt-[6px] max-w-[680px] text-center text-[10px] leading-tight text-texto-suave/80">
-          Es humor: el grupo está de tu parte por diseño. Solo los mensajes con enlace llevan datos
-          comprobados.
-        </p>
       </footer>
     </div>
   )

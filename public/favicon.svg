@@ -1,19 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <!--
-    El destello del aplauso: ocho rayitas alrededor de un hueco.
-    Dibujado por nosotros — sin manos, sin assets de terceros, sin licencias.
-    Trazo grueso y rayitas separadas para que sobreviva a 16px, que es el
-    tamaño real en una pestaña. Ver docs/design-system.md.
+    El destello del aplauso, sin las manos: tres rayitas arriba a la izquierda y
+    tres abajo a la derecha, alrededor de un círculo que no se dibuja.
+    Es la parte que queda del icono de referencia al quitarle las manos.
+
+    Dibujado por nosotros — sin assets de terceros ni licencias. Trazo grueso y
+    pocas formas para que sobreviva a 16px. Ver docs/design-system.md.
   -->
   <rect width="64" height="64" rx="14" fill="#25955D" />
-  <g stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" transform="translate(32 32)">
-    <path d="M0 -22V-13" />
-    <path d="M15.6 -15.6L9.2 -9.2" />
-    <path d="M22 0H13" />
-    <path d="M15.6 15.6L9.2 9.2" />
-    <path d="M0 22V13" />
-    <path d="M-15.6 15.6L-9.2 9.2" />
-    <path d="M-22 0H-13" />
-    <path d="M-15.6 -15.6L-9.2 -9.2" />
+  <g stroke="#FFFFFF" stroke-width="5" stroke-linecap="round">
+    <path d="M32 10V19" />
+    <path d="M16.4 16.4L22.8 22.8" />
+    <path d="M10 32H19" />
+
+    <path d="M32 54V45" />
+    <path d="M47.6 47.6L41.2 41.2" />
+    <path d="M54 32H45" />
   </g>
 </svg>

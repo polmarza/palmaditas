@@ -88,22 +88,24 @@ const FAQ: { p: string; r: React.ReactNode }[] = [
 export default function Landing() {
   return (
     <>
-      <section className="mx-auto flex min-h-dvh max-w-[560px] flex-col justify-center gap-7 px-6 py-20">
-        <img src="/favicon.svg" alt="" className="h-14 w-14 rounded-xl" />
+      {/* Centrado en móvil, alineado a la izquierda a partir de tablet. */}
+      <section className="mx-auto flex min-h-dvh max-w-[560px] flex-col justify-center gap-6 px-6 py-12 text-center sm:gap-7 sm:text-left">
+        <img src="/favicon.svg" alt="" className="mx-auto h-14 w-14 rounded-xl sm:mx-0" />
 
         <h1 className="text-[38px] font-extrabold leading-[1.08] tracking-tight text-balance sm:text-5xl">
           Cuenta una idea. Que alguien se venga arriba, para variar.
         </h1>
 
-        <p className="text-[17px] leading-relaxed text-texto-suave">
+        <p className="text-[17px] leading-relaxed text-texto-suave text-pretty">
           Sueltas una idea en el grupo y lo que vuelve son pegas. A veces las pegas están bien. Y a
           veces solo querías que alguien se emocionara contigo cinco minutos antes de ponerte a dudar.
         </p>
 
-        <div className="flex flex-col gap-3">
+        {/* Apilados y a ancho completo en móvil; en fila y al contenido en escritorio. */}
+        <div className="flex flex-col gap-3 sm:flex-row">
           <Link
             href="/chat"
-            className="rounded-full bg-acento px-6 py-[14px] text-center text-[16px] font-medium text-white"
+            className="rounded-full bg-acento px-7 py-[14px] text-center text-[16px] font-medium text-white"
           >
             Entrar al grupo
           </Link>
@@ -111,14 +113,14 @@ export default function Landing() {
             href={REPO}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-full border px-6 py-[14px] text-center text-[16px] font-medium"
+            className="rounded-full border px-7 py-[14px] text-center text-[16px] font-medium"
             style={{ borderColor: 'var(--color-garabato)' }}
           >
             Ver el código en GitHub
           </a>
         </div>
 
-        <p className="text-[13px] text-texto-suave">
+        <p className="text-[13px] text-texto-suave text-pretty">
           O clónatelo y ejecútalo gratis con tu propia clave. El código está abierto, los personajes
           también.
         </p>
@@ -131,11 +133,7 @@ export default function Landing() {
 
         <ul className="flex flex-col gap-3">
           {ORDEN.map((id) => (
-            <li
-              key={id}
-              className="rounded-lg border px-4 py-3"
-              style={{ borderColor: 'var(--color-garabato)' }}
-            >
+            <li key={id} className="rounded-lg bg-fondo px-4 py-3">
               <div className="flex items-baseline gap-2">
                 <span className="text-[15px] font-semibold" style={{ color: PERSONAJES[id].color }}>
                   {PERSONAJES[id].nombre}
@@ -158,18 +156,41 @@ export default function Landing() {
       <section className="mx-auto flex max-w-[560px] flex-col gap-6 px-6 pb-24">
         <h2 className="text-[26px] font-extrabold tracking-tight">Preguntas frecuentes</h2>
 
-        <dl className="flex flex-col gap-5">
+        {/*
+          Acordeón con <details> nativo: accesible por teclado, funciona sin
+          JavaScript y no necesita estado.
+        */}
+        <div className="flex flex-col">
           {FAQ.map(({ p, r }) => (
-            <div key={p}>
-              <dt className="text-[15px] font-semibold">{p}</dt>
-              <dd className="mt-1 text-[15px] leading-relaxed text-texto-suave">{r}</dd>
-            </div>
+            <details
+              key={p}
+              className="group border-b py-4"
+              style={{ borderColor: 'var(--color-garabato)' }}
+            >
+              <summary className="flex cursor-pointer list-none items-start justify-between gap-4 text-[15px] font-semibold [&::-webkit-details-marker]:hidden">
+                {p}
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  className="mt-[3px] shrink-0 text-texto-suave transition-transform group-open:rotate-180"
+                  aria-hidden
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </summary>
+              <p className="mt-2 pr-7 text-[15px] leading-relaxed text-texto-suave">{r}</p>
+            </details>
           ))}
-        </dl>
+        </div>
 
         <Link
           href="/chat"
-          className="mt-4 rounded-full bg-acento px-6 py-[14px] text-center text-[16px] font-medium text-white"
+          className="mt-4 rounded-full bg-acento px-7 py-[14px] text-center text-[16px] font-medium text-white sm:self-start"
         >
           Contarles una idea
         </Link>
