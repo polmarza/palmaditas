@@ -251,6 +251,34 @@ el cliente. El coste es perder el saldo al borrar cookies, mitigado con el enlac
 **Consecuencias:** una llamada extra por mensaje (~15 % más de coste, despreciable) y una batería de
 casos límite que mantener. **Bloqueante para el lanzamiento.**
 
+### 2026-08-12 — Compactación del historial y degradación por saldo
+
+**Contexto:** el historial entero viaja en cada llamada, así que el coste por tanda crece con la
+conversación y el acumulado es cuadrático. Medido: una conversación de 20 mensajes cuesta ~0,10 $;
+una de 100, **~1,50 $** — vez y media el saldo entero.
+
+**Decisión, en tres piezas:**
+
+1. **Compactación propia.** Cuando la entrada de una tanda supera **5.000 tokens** (sobre la tanda
+   13-15), se resume todo menos las cuatro últimas tandas y el resumen sustituye a lo anterior. El
+   coste por tanda deja de crecer y se estabiliza; esos 100 mensajes bajan de 1,50 $ a ~0,50 $. **La
+   compactación del lado del servidor (`compact_20260112`) no está disponible en Haiku 4.5**, así que
+   se hace con una llamada propia — que además permite decidir qué se conserva.
+2. **Reserva del 5 %.** El saldo se considera agotado al llegar al 5 % del paquete, no a cero, para
+   absorber una tanda más cara de lo previsto sin dejar el saldo en negativo.
+3. **Degradación en lugar de corte.** Al entrar en esa reserva **se desactiva la búsqueda web pero se
+   puede seguir conversando**, con un aviso que explica exactamente qué se ha desconectado y qué se
+   recupera recargando. Cortar del todo es hostil; quitar solo lo caro es honesto y convierte el
+   límite en un argumento para recargar.
+
+**Qué conserva el resumen, sin excepción:** la idea original con sus detalles concretos, las
+decisiones tomadas, las objeciones y **los datos verificados con su URL**. Los datos con fuente son
+lo único comprobable del producto; perderlos en un resumen sería peor que no resumir.
+
+**Consecuencias:** una llamada extra cada ~13 tandas (barata) y el riesgo de que un resumen pierda
+algo que importaba. Por eso se conservan cuatro tandas íntegras: el hilo inmediato nunca pasa por el
+resumen.
+
 ### 2026-08-12 — El saldo se mide en coste de API, no en mensajes
 
 **Contexto:** el modelo de "100 mensajes por 5 €" se rompió en cuanto una función nueva —la búsqueda—

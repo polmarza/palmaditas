@@ -12,6 +12,7 @@ import { createInterface } from 'node:readline/promises'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { stdin, stdout } from 'node:process'
 import { generarTanda, type Turno } from '../src/lib/elenco/tanda.js'
+import { compactar, UMBRAL_COMPACTAR } from '../src/lib/elenco/compactar.js'
 import { GRIS_ANSI, PERSONAJES, RESET_ANSI } from '../src/lib/elenco/personajes.js'
 import { MENCIONES_DISPONIBLES } from '../src/lib/elenco/menciones.js'
 
@@ -32,6 +33,8 @@ const transcripcion: string[] = []
 let costeTotal = 0
 let tandas = 0
 let busquedasTotal = 0
+/** Tokens de entrada de la última tanda: dispara la compactación cuando crece demasiado. */
+let ultimaEntrada = 0
 
 const rl = createInterface({ input: stdin, output: stdout })
 
@@ -80,6 +83,26 @@ while (true) {
     continue
   }
 
+  // El historial entero viaja en cada llamada, así que el coste crece de forma
+  // cuadrática si no se resume. Se usa el consumo real de la última tanda como
+  // disparador, que es exacto y gratis.
+  if (ultimaEntrada > UMBRAL_COMPACTAR) {
+    process.stdout.write(`${GRIS_ANSI}resumiendo lo hablado…${RESET_ANSI}`)
+    try {
+      const { historial: compactado, coste } = await compactar(historial)
+      historial.length = 0
+      historial.push(...compactado)
+      costeTotal += coste
+      ultimaEntrada = 0
+      process.stdout.write('\r\x1b[K')
+      console.log(`${GRIS_ANSI}Historial resumido · ${coste.toFixed(4)} $${RESET_ANSI}\n`)
+    } catch {
+      process.stdout.write('\r\x1b[K')
+      console.log(`${GRIS_ANSI}No se pudo resumir; se sigue con el historial completo${RESET_ANSI}\n`)
+      ultimaEntrada = 0
+    }
+  }
+
   historial.push({ rol: 'usuario', contenido: entrada })
   transcripcion.push(`**Tú:** ${entrada}\n`)
 
@@ -110,6 +133,7 @@ while (true) {
 
     costeTotal += coste
     tandas += 1
+    ultimaEntrada = tokens.entrada
 
     busquedasTotal += busquedas
     const nota = busquedas > 0 ? ` · ${busquedas} búsqueda(s)` : ''

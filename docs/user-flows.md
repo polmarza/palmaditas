@@ -92,27 +92,42 @@ flowchart TD
 
 ---
 
-## [FLOW-03] — Saldo agotado y recarga
+## [FLOW-03] — Saldo bajo, degradación y recarga
 
-**Actor:** usuario que ha gastado sus mensajes
-**Trigger:** intenta enviar sin saldo
-**Resultado esperado:** recarga y sigue **sin perder la conversación**
+**Actor:** usuario que se está quedando sin saldo
+**Trigger:** el saldo entra en la reserva del 5 %
+**Resultado esperado:** sigue conversando con menos funciones, y sabe exactamente qué recupera si
+recarga
+
+**El saldo no se acaba de golpe: se degrada.** Cortar del todo deja al usuario sin producto y sin
+motivo concreto para pagar. Quitar solo lo caro le deja seguir y convierte el límite en un argumento.
 
 ### Pasos
 
-1. Escribe y envía. No hay saldo.
-2. Aparece la pantalla de recarga, sobre el chat, sin borrarlo.
-3. Paga. El webhook acredita el saldo a **la misma sesión**.
-4. Vuelve al chat exactamente donde estaba y su mensaje pendiente se envía.
+1. El saldo baja del 5 % del paquete.
+2. **Se desactiva la búsqueda web.** Aparece un aviso claro: *"Te queda poco saldo, así que he
+   desconectado la búsqueda en internet. Puedes seguir hablando con el grupo; recarga para que
+   vuelvan a poder comprobar datos."*
+3. La conversación continúa con normalidad. Las menciones siguen funcionando, pero quien esté
+   etiquetado responde de memoria en lugar de buscar.
+4. Cuando el saldo llega a cero, aparece la pantalla de recarga sobre el chat, sin borrarlo.
+5. Paga. El webhook acredita a **la misma sesión** y se restablece la búsqueda.
+6. Vuelve al chat donde estaba y su mensaje pendiente se envía.
 
 ### Diagrama
 
 ```mermaid
 flowchart TD
-  A[Envía sin saldo] --> B[Pantalla de recarga sobre el chat]
-  B -->|paga| C[Webhook acredita a la misma sesión]
-  B -->|cierra| D[Vuelve al chat, mensaje sin enviar]
-  C --> E[Se envía el mensaje pendiente]
+  A[Conversando] --> B{¿Saldo bajo el 5%?}
+  B -->|no| A
+  B -->|sí| C[Búsqueda desactivada + aviso]
+  C --> D[Sigue conversando sin búsqueda]
+  D --> E{¿Saldo a cero?}
+  E -->|no| D
+  E -->|sí| F[Pantalla de recarga sobre el chat]
+  F -->|paga| G[Webhook acredita a la misma sesión]
+  F -->|cierra| H[Vuelve al chat, mensaje sin enviar]
+  G --> I[Búsqueda restablecida, se envía el pendiente]
 ```
 
 ### Casos de error
