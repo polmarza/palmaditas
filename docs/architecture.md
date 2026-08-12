@@ -154,7 +154,30 @@ sarcasmo o una idea sobre un tema oscuro. Un falso positivo mata el producto —
 negro y te sale una línea de ayuda— y es un fallo tan grave como un falso negativo. Se calibra con
 una batería de casos límite antes de lanzar.
 
-**Qué pasa cuando salta:**
+**Tres niveles, no dos.** Entre "aplaudir" y "cortar" hay una zona gris —una hipérbole que menciona
+un método concreto, "esto o me tiro por la ventana"— donde las dos salidas son malas: aplaudir se
+tapa los ojos, y soltar un teléfono de emergencias por una frase hecha rompe la experiencia y trata
+al usuario como si fuera de cristal.
+
+La salida es la que daría un amigo: **preguntar**.
+
+| Nivel | Qué pasa |
+|-------|----------|
+| `normal` | El grupo responde como siempre |
+| `comprobar` | El grupo no aplaude. **Iván pregunta si va en serio**, sin dramatismo y sin dar recursos. La respuesta del usuario decide |
+| `alto` | El grupo se calla y responde el sistema |
+
+Dos detalles que hacen que esto funcione y no es evidente que lo hagan:
+
+- **La pregunta no puede estar sesgada.** "Espero que no lo digas en serio" empuja al "no", que es la
+  respuesta fácil y justo lo que hace alguien que está mal. Tiene que dejar sitio real a un sí.
+- **Tras una comprobación no se vuelve a preguntar.** Si el usuario desmiente con claridad, se sigue;
+  si confirma, insiste o se escurre, es `alto`. Preguntar dos veces sería un interrogatorio.
+
+Iván es quien pregunta porque ya es el que rompe el tono del grupo. Le encaja, y de paso le da una
+capa: el aguafiestas es el único que se da cuenta.
+
+**Qué pasa cuando salta a `alto`:**
 
 - El grupo **no responde**. No se genera la tanda.
 - Aparece un mensaje del sistema, visualmente distinto de las burbujas del elenco: sin color de

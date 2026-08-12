@@ -32,6 +32,8 @@ export function Chat() {
 
   const historial = useRef<Turno[]>([])
   const contador = useRef(0)
+  /** La tanda anterior fue una comprobación: el siguiente mensaje es la respuesta. */
+  const traComprobacion = useRef(false)
   const finRef = useRef<HTMLDivElement>(null)
   const temporizadores = useRef<ReturnType<typeof setTimeout>[]>([])
 
@@ -111,7 +113,10 @@ export function Chat() {
       const respuesta = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ historial: historial.current }),
+        body: JSON.stringify({
+          historial: historial.current,
+          traComprobacion: traComprobacion.current,
+        }),
       })
 
       if (!respuesta.ok) throw new Error('Respuesta con error')
@@ -119,11 +124,13 @@ export function Chat() {
       const datos = (await respuesta.json()) as {
         mensajes?: MensajeElenco[]
         sistema?: string
+        comprobacion?: boolean
       }
 
       // Ha saltado la salvaguarda: el grupo no responde y no hay tanda que desplegar.
       if (datos.sistema) {
         historial.current.pop()
+        traComprobacion.current = false
         setVisibles((previos) => [
           ...previos,
           { id: contador.current++, personaje: 'sistema', texto: datos.sistema!, hora: ahora() },
@@ -132,6 +139,7 @@ export function Chat() {
         return
       }
 
+      traComprobacion.current = datos.comprobacion === true
       const mensajes = datos.mensajes ?? []
       historial.current.push({ rol: 'grupo', contenido: JSON.stringify({ mensajes }) })
       desplegar(mensajes)

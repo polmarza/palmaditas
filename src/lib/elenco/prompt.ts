@@ -106,6 +106,25 @@ export function systemPara(mencionada: string | null): string {
 En este mensaje el usuario se ha dirigido a **${mencionada}**. Contesta únicamente ${mencionada}, con uno o dos mensajes. Los demás no aparecen en esta tanda.`
 }
 
+/**
+ * Tanda de comprobación: el usuario ha dicho algo que probablemente es una
+ * forma de hablar, pero que menciona hacerse daño.
+ *
+ * En vez de aplaudir (falso negativo) o soltarle un teléfono de ayuda (falso
+ * positivo), el grupo hace lo que haría un amigo: preguntar. La respuesta
+ * decide. Ver docs/architecture.md.
+ */
+export const INSTRUCCION_COMPROBACION = `
+---
+
+El último mensaje del usuario menciona hacerse daño. Probablemente es una forma de hablar, pero no se puede dar por hecho.
+
+En esta tanda **el grupo no aplaude la idea ni bromea con eso**. Responde **solo Iván**, con uno o dos mensajes cortos:
+
+- Pregunta con naturalidad si lo dice en serio. Es un amigo preguntando, no un protocolo: sin dramatismo, sin discurso y sin dar teléfonos ni recursos.
+- **La pregunta tiene que dejar sitio de verdad a un sí.** Nada de "espero que no lo digas en serio" ni "es broma, ¿no?": empujan a que diga que no aunque no sea verdad. Sirven "oye, ¿eso lo dices en serio?" o "¿estás bien?".
+- Nada de emojis, y no cambies de tema después.`
+
 /** Esquema de salida. Structured outputs garantiza que la tanda venga bien formada. */
 export const ESQUEMA_TANDA = {
   type: 'object',

@@ -36,6 +36,10 @@ let tandas = 0
 let busquedasTotal = 0
 /** Tokens de entrada de la última tanda: dispara la compactación cuando crece demasiado. */
 let ultimaEntrada = 0
+/** La tanda anterior fue una comprobación: el siguiente mensaje es la respuesta. */
+let traComprobacion = false
+/** Esta tanda es de comprobación: el grupo pregunta en vez de aplaudir. */
+let comprobacion = false
 
 const rl = createInterface({ input: stdin, output: stdout })
 
@@ -115,14 +119,18 @@ while (true) {
       .filter((turno) => turno.rol === 'usuario')
       .slice(0, -1)
       .map((turno) => turno.contenido)
-    const { sensible, categoria } = await clasificar(entrada, previos)
-    if (sensible) {
+    const { nivel, categoria } = await clasificar(entrada, previos, traComprobacion)
+
+    if (nivel === 'alto') {
       historial.pop()
+      traComprobacion = false
       process.stdout.write('\r\x1b[K')
-      console.log(`${GRIS_ANSI}${respuestaDelSistema(categoria).replace(/\n/g, `\n`)}${RESET_ANSI}\n`)
+      console.log(`${GRIS_ANSI}${respuestaDelSistema(categoria)}${RESET_ANSI}\n`)
       transcripcion.push(`- _[salvaguarda: el grupo no responde]_\n`)
       continue
     }
+
+    comprobacion = nivel === 'comprobar'
   } catch (error) {
     // Se falla hacia el lado seguro: sin clasificar, no se genera tanda.
     process.stdout.write('\r\x1b[K')
@@ -132,7 +140,8 @@ while (true) {
   }
 
   try {
-    const { mensajes, coste, tokens, busquedas } = await generarTanda(historial)
+    const { mensajes, coste, tokens, busquedas } = await generarTanda(historial, { comprobacion })
+    traComprobacion = comprobacion
 
     // Borra la línea de "escribiendo…"
     process.stdout.write('\r\x1b[K')

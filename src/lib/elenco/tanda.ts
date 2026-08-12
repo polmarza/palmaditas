@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
-import { ESQUEMA_TANDA, systemPara } from './prompt'
+import { ESQUEMA_TANDA, INSTRUCCION_COMPROBACION, systemPara } from './prompt'
 import { detectarMencion } from './menciones'
 import { PERSONAJES, type PersonajeId } from './personajes'
 
@@ -60,11 +60,15 @@ const cliente = new Anthropic()
  * Con búsqueda, la llamada puede pausarse mientras el servidor la ejecuta
  * (`stop_reason: "pause_turn"`); en ese caso se reenvía para que continúe.
  */
-export async function generarTanda(historial: Turno[]): Promise<ResultadoTanda> {
+export async function generarTanda(
+  historial: Turno[],
+  opciones: { comprobacion?: boolean } = {},
+): Promise<ResultadoTanda> {
   const ultimo = historial.at(-1)
   const mencion = ultimo?.rol === 'usuario' ? detectarMencion(ultimo.contenido) : null
-  // Cualquiera al que etiqueten puede buscar, no solo Bego.
-  const puedeBuscar = mencion !== null
+  // Cualquiera al que etiqueten puede buscar, no solo Bego. En una tanda de
+  // comprobación no se busca nada: solo se pregunta.
+  const puedeBuscar = mencion !== null && !opciones.comprobacion
 
   const mensajes: Anthropic.MessageParam[] = historial.map((turno) => ({
     role: turno.rol === 'usuario' ? ('user' as const) : ('assistant' as const),
@@ -79,7 +83,9 @@ export async function generarTanda(historial: Turno[]): Promise<ResultadoTanda> 
     const respuesta = await cliente.messages.create({
       model: MODELO,
       max_tokens: 2000,
-      system: systemPara(mencion ? PERSONAJES[mencion].nombre : null),
+      system: opciones.comprobacion
+        ? systemPara(null) + INSTRUCCION_COMPROBACION
+        : systemPara(mencion ? PERSONAJES[mencion].nombre : null),
       output_config: { format: { type: 'json_schema', schema: ESQUEMA_TANDA } },
       // Solo Bego etiquetada tiene buscador: es el tope de coste y de latencia.
       ...(puedeBuscar

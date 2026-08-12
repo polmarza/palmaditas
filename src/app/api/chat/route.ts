@@ -12,10 +12,13 @@ import { clasificar, respuestaDelSistema } from '@/lib/salvaguarda/clasificar'
 export async function POST(peticion: Request) {
   let historial: Turno[]
 
+  let traComprobacion = false
+
   try {
-    const cuerpo = (await peticion.json()) as { historial?: unknown }
+    const cuerpo = (await peticion.json()) as { historial?: unknown; traComprobacion?: unknown }
     if (!Array.isArray(cuerpo.historial)) throw new Error('historial ausente')
     historial = cuerpo.historial as Turno[]
+    traComprobacion = cuerpo.traComprobacion === true
   } catch {
     return Response.json({ error: 'Petición mal formada.' }, { status: 400 })
   }
@@ -37,11 +40,16 @@ export async function POST(peticion: Request) {
     .slice(0, -1)
     .map((turno) => turno.contenido)
 
+  let comprobacion = false
+
   try {
-    const { sensible, categoria } = await clasificar(ultimo.contenido, previos)
-    if (sensible) {
+    const { nivel, categoria } = await clasificar(ultimo.contenido, previos, traComprobacion)
+
+    if (nivel === 'alto') {
       return Response.json({ sistema: respuestaDelSistema(categoria) })
     }
+    // Señal ambigua: en vez de aplaudir o de soltar un teléfono, se pregunta.
+    comprobacion = nivel === 'comprobar'
   } catch (error) {
     // Se falla hacia el lado seguro: sin clasificar, no se genera tanda.
     console.error('Fallo en la salvaguarda:', error)
@@ -49,8 +57,8 @@ export async function POST(peticion: Request) {
   }
 
   try {
-    const { mensajes } = await generarTanda(historial)
-    return Response.json({ mensajes })
+    const { mensajes } = await generarTanda(historial, { comprobacion })
+    return Response.json({ mensajes, comprobacion })
   } catch (error) {
     console.error('Fallo al generar la tanda:', error)
     return Response.json({ error: 'El grupo no ha contestado.' }, { status: 502 })
