@@ -17,7 +17,13 @@ export async function POST(peticion: Request) {
   const limite = await comprobarLimite(peticion)
   if (!limite.permitido) {
     return Response.json(
-      { error: 'Vas muy rápido. Dales un respiro al grupo y vuelve en un momento.' },
+      {
+        motivo: limite.motivo,
+        error:
+          limite.motivo === 'cupo'
+            ? 'Se ha agotado el uso de prueba.'
+            : 'Vas muy rápido. Dales un respiro al grupo y vuelve en un momento.',
+      },
       { status: 429, headers: { 'retry-after': String(limite.esperar ?? 60) } },
     )
   }

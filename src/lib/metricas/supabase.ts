@@ -32,6 +32,18 @@ export async function insertar(tabla: string, fila: Record<string, unknown>): Pr
   })
 }
 
+/** Trae filas que cumplen un filtro. El `select=` va dentro del propio filtro. */
+export async function seleccionar<T>(tabla: string, filtro: string): Promise<T[]> {
+  if (!METRICAS_ACTIVAS) return []
+
+  const respuesta = await fetch(`${URL_BASE}/rest/v1/${tabla}?${filtro}`, {
+    headers: cabeceras(),
+  })
+
+  if (!respuesta.ok) return []
+  return (await respuesta.json()) as T[]
+}
+
 /** Cuenta filas que cumplen un filtro, sin traérselas. */
 export async function contar(tabla: string, filtro: string): Promise<number> {
   if (!METRICAS_ACTIVAS) return 0

@@ -5,6 +5,7 @@ import { ChatHeader } from './ChatHeader'
 import { DoodleBackground } from './DoodleBackground'
 import { MessageBubble } from './MessageBubble'
 import { SystemNotice } from './SystemNotice'
+import { LimiteDrawer } from './LimiteDrawer'
 import { planificar } from '@/lib/elenco/ritmo'
 import type { PersonajeId } from '@/lib/elenco/personajes'
 import type { Fuente, MensajeElenco, Turno } from '@/lib/elenco/tanda'
@@ -29,6 +30,9 @@ export function Chat() {
   const [borrador, setBorrador] = useState('')
   const [ocupado, setOcupado] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  /** Se ha agotado el uso de prueba: el campo se bloquea, la conversación se sigue leyendo. */
+  const [cupoAgotado, setCupoAgotado] = useState(false)
+  const [drawerVisible, setDrawerVisible] = useState(false)
 
   const historial = useRef<Turno[]>([])
   const contador = useRef(0)
@@ -127,8 +131,17 @@ export function Chat() {
       })
 
       if (respuesta.status === 429) {
+        const { motivo } = (await respuesta.json()) as { motivo?: string }
         historial.current.pop()
-        setError('Vas muy rápido. Dales un respiro al grupo y vuelve en un momento.')
+        setBorrador(texto)
+
+        if (motivo === 'cupo') {
+          setCupoAgotado(true)
+          setDrawerVisible(true)
+        } else {
+          setError('Vas muy rápido. Dales un respiro al grupo y vuelve en un momento.')
+        }
+
         setOcupado(false)
         return
       }
@@ -208,6 +221,8 @@ export function Chat() {
         </div>
       </main>
 
+      {drawerVisible && <LimiteDrawer onCerrar={() => setDrawerVisible(false)} />}
+
       <footer className="relative bg-barra px-3 py-2">
         <div className="mx-auto flex max-w-[680px] items-end gap-2">
           <textarea
@@ -219,14 +234,16 @@ export function Chat() {
                 void enviar()
               }
             }}
+            onFocus={() => cupoAgotado && setDrawerVisible(true)}
+            disabled={cupoAgotado}
             rows={1}
-            placeholder="Escribe una idea"
+            placeholder={cupoAgotado ? 'Se ha agotado el uso de prueba' : 'Escribe una idea'}
             aria-label="Escribe una idea"
-            className="max-h-32 min-h-[42px] flex-1 resize-none rounded-[21px] bg-entrante px-4 py-[11px] text-[16px] outline-none placeholder:text-texto-suave"
+            className="max-h-32 min-h-[42px] flex-1 resize-none rounded-[21px] bg-entrante px-4 py-[11px] text-[16px] outline-none placeholder:text-texto-suave disabled:opacity-60"
           />
           <button
             onClick={() => void enviar()}
-            disabled={borrador.trim() === '' || ocupado}
+            disabled={borrador.trim() === '' || ocupado || cupoAgotado}
             aria-label="Enviar"
             className="grid h-[42px] w-[42px] shrink-0 place-items-center rounded-full bg-acento text-white transition-opacity disabled:opacity-40"
           >
