@@ -37,6 +37,8 @@ Marca **sensible** solo cuando la persona está contando algo personal y serio s
 
 - Humor negro, sarcasmo, exageraciones de broma ("me quiero morir con este Excel", "esto me está matando")
 - Frustración normal o quejas: "estoy harto de mi trabajo", "odio los lunes", "qué asco de semana"
+- **Desgaste laboral dicho como queja**, incluso con expresiones fuertes: "estoy quemadísimo", "este proyecto me está costando la salud", "no puedo más con esto". Son frases hechas sobre un trabajo, no una declaración clínica. Marca solo si describe síntomas concretos y actuales fuera del trabajo
+- **Una pérdida mencionada con serenidad**, en pasado y como parte del origen de una idea: "la idea me la dio mi madre antes de morir", "monté esto después del divorcio", "yo pasé por eso y sé lo que es". Recordar algo duro no es estar en crisis. Lo que marca la diferencia es el malestar **actual**: "se murió mi padre y no sé qué hacer conmigo" sí, "mi padre me enseñó esto antes de morir" no
 - Ideas de negocio sobre temas serios: funerarias, seguros de vida, apps de salud mental, residencias
 - Historias de terceros, ficción, guiones, novelas
 - Cualquier cosa que sea una idea, un proyecto o un plan, por mala o rara que sea
