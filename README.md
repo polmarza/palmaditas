@@ -2,9 +2,10 @@
 
 Un grupo de chat donde cuatro personajes se emocionan con tu idea.
 
-> ⚠️ **Estado: en diseño. Todavía no hay código.** La documentación de producto, arquitectura y
-> diseño está completa en [`docs/`](./docs); la implementación arranca ahora. Las instrucciones de
-> instalación de más abajo describen cómo funcionará, no cómo funciona hoy.
+> ⚠️ **Estado: Fase 0.** La documentación está completa en [`docs/`](./docs) y **el elenco ya se
+> puede probar desde el terminal** (`pnpm elenco`). Todavía no hay web: ni interfaz, ni pagos, ni
+> base de datos. Antes de construir nada de eso hay que responder a una pregunta — ¿los cuatro
+> personajes tienen gracia durante quince mensajes seguidos?
 
 ---
 
@@ -61,14 +62,21 @@ pnpm install
 cp .env.example .env.local
 ```
 
-Pon tu `ANTHROPIC_API_KEY` en `.env.local` y arranca:
+Pon tu `ANTHROPIC_API_KEY` en `.env.local` y habla con el elenco:
 
 ```bash
-pnpm dev
+pnpm elenco
 ```
 
-Sin configuración de pasarela de pago, el proyecto arranca en modo libre: sin saldo, sin base de
-datos y sin límite de mensajes. Consume directamente de tu clave.
+Se abre una conversación en el terminal: escribes una idea y el grupo responde. **Sin efecto de
+escritura ni retardos, a propósito** — esto sirve para juzgar si los personajes tienen gracia, no si
+la animación funciona. Si solo tiene gracia con la animación, el producto es un truco.
+
+Cada tanda muestra los tokens y el coste real, y al salir con `/salir` se guarda la transcripción en
+`transcripciones/` (ignorada por git) para poder releerla con calma.
+
+Cuando exista la web, `pnpm dev` la arrancará en modo libre: sin saldo, sin base de datos y sin
+límite, consumiendo directamente de tu clave.
 
 ### Variables de entorno
 

@@ -1,0 +1,20 @@
+{
+  "name": "palmaditas",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Un grupo de chat donde cuatro personajes se emocionan con tu idea",
+  "license": "MIT",
+  "scripts": {
+    "elenco": "tsx --env-file=.env.local scripts/conversar.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.116.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2"
+  }
+}

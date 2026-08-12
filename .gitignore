@@ -41,6 +41,9 @@ coverage/
 # Nota: .mcp.json SÍ se commitea (las claves van como ${VARIABLE}, nunca el valor real).
 .claude/settings.local.json
 
+# Transcripciones de las pruebas del elenco (pueden contener ideas personales)
+transcripciones/
+
 # OS
 .DS_Store
 Thumbs.db

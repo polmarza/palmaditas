@@ -1,0 +1,4 @@
+# esbuild es dependencia de tsx y necesita su script de instalación para funcionar.
+# pnpm bloquea los scripts de instalación por defecto; aquí se aprueba el único que hace falta.
+allowBuilds:
+  esbuild: true
