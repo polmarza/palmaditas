@@ -50,10 +50,16 @@ de tokens de entrada y $5 de salida):
 la quinta tanda cuesta un 30 % más que la primera. Por eso el número que importa no es el de una
 tanda suelta sino el acumulado de una conversación larga.
 
-Sobre 5 € de ingreso, agotar un paquete cuesta en torno al 10 % en API. El resto se lo lleva la
+Sobre 5 € de ingreso, agotar un paquete cuesta en torno al 10 % en tokens. El resto se lo lleva la
 comisión de la pasarela, el IVA según el proveedor que elijamos, y el margen. **El riesgo de que un
-usuario dispare la factura no existe a esta escala** — para gastar 5 € de API tendría que enviar del
-orden de mil mensajes.
+usuario dispare la factura no existe a esta escala** — para gastar 5 € en tokens tendría que enviar
+del orden de mil mensajes.
+
+> ⚠️ **Falta un coste por medir: las búsquedas web de Bego.** Se facturan aparte de los tokens y no
+> están en la tabla de arriba. El script de conversación ya cuenta cuántas se hacen por tanda; hay
+> que multiplicarlas por la tarifa vigente y sumarlas antes de dar el precio por definitivo. Está
+> acotado a 3 búsquedas por tanda, pero si Bego busca en la mayoría de tandas puede pesar más que
+> los propios tokens.
 
 Dos supuestos que ya se han confirmado midiendo:
 

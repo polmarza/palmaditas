@@ -168,6 +168,11 @@ Este comportamiento es **bloqueante para el lanzamiento**: la web de pago no sal
 
 - **Anthropic API** — generación de las tandas y clasificador de la salvaguarda. Se llama desde
   route handlers; la clave nunca llega al cliente.
+- **Búsqueda web (herramienta de servidor de Anthropic)** — solo para Bego. Se declara como
+  `web_search_20250305` en la misma llamada de la tanda, con un tope de 3 búsquedas. Tres
+  consecuencias que hay que tener presentes: **añade latencia** (compite contra el techo de 10 s por
+  tanda), **se factura aparte de los tokens**, y **puede pausar la llamada** (`stop_reason:
+  "pause_turn"`), que se reintenta reenviando la conversación.
 - **Supabase** — saldo por sesión. Una tabla.
 - **Pasarela de pago** — sin decidir. Detrás de una interfaz `AdaptadorDePago` con dos operaciones:
   crear el cobro y procesar el webhook de confirmación. Cambiar de proveedor es escribir una
@@ -241,6 +246,20 @@ el cliente. El coste es perder el saldo al borrar cookies, mitigado con el enlac
 **Decisión:** (b). Ver la sección "La salvaguarda" arriba.
 **Consecuencias:** una llamada extra por mensaje (~15 % más de coste, despreciable) y una batería de
 casos límite que mantener. **Bloqueante para el lanzamiento.**
+
+### 2026-08-12 — Bego busca de verdad, con fuente enlazada
+
+**Contexto:** el diseño original le hacía inventarse estadísticas. En la primera prueba con una idea
+real, sus cifras salieron plausibles en lugar de absurdas —dio precios de alquiler de una ciudad
+concreta— y se usaron como información real.
+**Opciones consideradas:** (a) forzar que las cifras fueran imposibles para que nadie se las creyera;
+(b) mantener cifras plausibles inventadas y añadir un aviso; (c) darle búsqueda web real.
+**Decisión:** (c). La (b) se descartó porque un aviso de "la IA puede cometer errores" describe mal
+un sistema *instruido para inventar*, y compite en desventaja contra un dato con formato de informe.
+La (a) era segura pero renunciaba a la utilidad que el producto había demostrado tener.
+**Consecuencias:** el producto gana una parte fiable y verificable —lo que lleva enlace es real—
+mientras el resto sigue siendo humor. A cambio: latencia, coste por búsqueda, manejo de `pause_turn`,
+y Bego deja de ser la que se inventa las cosas para ser la que las mira.
 
 ### 2026-08-12 — Demo guionizada en lugar de prueba gratuita
 

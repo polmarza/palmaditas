@@ -30,6 +30,7 @@ const historial: Turno[] = []
 const transcripcion: string[] = []
 let costeTotal = 0
 let tandas = 0
+let busquedasTotal = 0
 
 const rl = createInterface({ input: stdin, output: stdout })
 
@@ -46,8 +47,9 @@ juzgar si los personajes tienen gracia, no si la animación funciona.
 function resumenCoste(): string {
   const medio = tandas > 0 ? costeTotal / tandas : 0
   return (
-    `${GRIS_ANSI}${tandas} tanda(s) · ${costeTotal.toFixed(4)} $ en total · ` +
-    `${medio.toFixed(4)} $ por tanda · ~${(medio * 100).toFixed(2)} $ por 100 mensajes${RESET_ANSI}`
+    `${GRIS_ANSI}${tandas} tanda(s) · ${costeTotal.toFixed(4)} $ en tokens · ` +
+    `${medio.toFixed(4)} $ por tanda · ~${(medio * 100).toFixed(2)} $ por 100 mensajes\n` +
+    `${busquedasTotal} búsqueda(s) web — se facturan aparte de los tokens${RESET_ANSI}`
   )
 }
 
@@ -77,7 +79,7 @@ while (true) {
   process.stdout.write(`${GRIS_ANSI}escribiendo…${RESET_ANSI}`)
 
   try {
-    const { mensajes, coste, tokens } = await generarTanda(historial)
+    const { mensajes, coste, tokens, busquedas } = await generarTanda(historial)
 
     // Borra la línea de "escribiendo…"
     process.stdout.write('\r\x1b[K')
@@ -87,6 +89,12 @@ while (true) {
       const texto = mensaje.mono ? `\x1b[2m${mensaje.texto}${RESET_ANSI}` : mensaje.texto
       console.log(`${personaje.ansi}${NEGRITA}${personaje.nombre}${RESET_ANSI} ${texto}`)
       transcripcion.push(`- **${personaje.nombre}:** ${mensaje.texto}`)
+
+      // La fuente es lo que separa el dato verificable de la coña del resto del grupo.
+      if (mensaje.fuente) {
+        console.log(`     ${GRIS_ANSI}↳ ${mensaje.fuente.titulo} · ${mensaje.fuente.url}${RESET_ANSI}`)
+        transcripcion.push(`  - Fuente: [${mensaje.fuente.titulo}](${mensaje.fuente.url})`)
+      }
     }
 
     // El grupo vuelve al historial como su JSON, que es lo que el modelo produce.
@@ -96,8 +104,11 @@ while (true) {
     costeTotal += coste
     tandas += 1
 
+    busquedasTotal += busquedas
+    const nota = busquedas > 0 ? ` · ${busquedas} búsqueda(s)` : ''
+
     console.log(
-      `\n${GRIS_ANSI}${tokens.entrada} entrada · ${tokens.salida} salida · ` +
+      `\n${GRIS_ANSI}${tokens.entrada} entrada · ${tokens.salida} salida${nota} · ` +
         `${coste.toFixed(4)} $ · acumulado ${costeTotal.toFixed(4)} $${RESET_ANSI}\n`,
     )
   } catch (error) {

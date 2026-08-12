@@ -225,6 +225,12 @@ alineada a la derecha y con doble check.
 Cabecera: avatar del grupo, nombre ("Palmaditas"), lista de participantes y —cuando toca— el estado
 "X está escribiendo…" en su lugar. Es el componente que lleva el ritmo del grupo.
 
+### FuenteCitada
+La línea de fuente bajo un mensaje de Bego con dato: título y enlace, en texto secundario y tamaño
+pequeño. **Es el elemento que separa lo verificable de la coña**, así que debe leerse sobrio y
+ligeramente aparte de la burbuja, no como parte del mensaje. Solo aparece en mensajes de Bego cuyo
+dato viene de una búsqueda.
+
 ### CastCard
 Presentación de un personaje en la landing: avatar, nombre, una línea de descripción y una frase de
 ejemplo con su voz. La de Iván se diferencia del resto.
