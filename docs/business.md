@@ -32,24 +32,30 @@ cuentas, sin prueba gratuita.
 ### Por qué 100 mensajes por 5 €
 
 Porque el coste real es ínfimo y el precio no está puesto para cubrir la API, sino para que la
-cifra suene generosa y quite de la cabeza la idea de racionar. Los números, con Haiku 4.5
-($1 por millón de tokens de entrada, $5 de salida):
+cifra suene generosa y quite de la cabeza la idea de racionar.
 
-| Concepto | Estimación |
+**Cifras medidas** en una conversación real de cinco tandas (2026-08-12, Haiku 4.5 a $1 por millón
+de tokens de entrada y $5 de salida):
+
+| Concepto | Medido |
 |---|---|
-| Entrada por tanda (prompt del elenco + historial) | ~1.900 tokens |
-| Salida por tanda (mensajes cortos de cuatro personajes) | ~320 tokens |
-| **Coste por mensaje del usuario** | **~0,0035 $** |
-| Coste de una conversación completa de 20 mensajes | ~0,07 $ |
-| Coste de agotar un paquete de 100 mensajes | **~0,35 $** |
+| Entrada, primera tanda | 1.881 tokens |
+| Entrada, quinta tanda | 2.892 tokens |
+| Salida por tanda | 150–290 tokens |
+| **Coste por mensaje del usuario** | **0,0033 – 0,0043 $** |
+| Coste de una conversación de 20 mensajes (extrapolado) | ~0,11 $ |
+| Coste de agotar un paquete de 100 mensajes | **~0,50 $** |
 
-Sobre 5 € de ingreso, el coste de API de un paquete completamente consumido ronda el 7 %. El resto
-se lo lleva la comisión de la pasarela, el IVA según el proveedor que elijamos, y el margen. **El
-riesgo de que un usuario dispare la factura no existe a esta escala** — para gastar 5 € de API
-tendría que enviar unos 1.400 mensajes.
+**El coste por tanda crece con la conversación**, porque el historial entero viaja en cada llamada:
+la quinta tanda cuesta un 30 % más que la primera. Por eso el número que importa no es el de una
+tanda suelta sino el acumulado de una conversación larga.
 
-Dos supuestos importantes detrás de esos números, ambos a validar midiendo antes de fijar el precio
-definitivo:
+Sobre 5 € de ingreso, agotar un paquete cuesta en torno al 10 % en API. El resto se lo lleva la
+comisión de la pasarela, el IVA según el proveedor que elijamos, y el margen. **El riesgo de que un
+usuario dispare la factura no existe a esta escala** — para gastar 5 € de API tendría que enviar del
+orden de mil mensajes.
+
+Dos supuestos que ya se han confirmado midiendo:
 
 1. **Una sola llamada a la API por tanda, no cuatro.** Generar los cuatro mensajes en una única
    llamada cuesta cerca de un tercio que hacer una llamada por personaje, porque el historial se
