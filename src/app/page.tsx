@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { DemoScroll } from '@/components/landing/DemoScroll'
+import { DemoChat } from '@/components/landing/DemoChat'
 import { ORDEN, PERSONAJES } from '@/lib/elenco/personajes'
 
 const REPO = 'https://github.com/polmarza/palmaditas'
@@ -88,11 +88,16 @@ const FAQ: { p: string; r: React.ReactNode }[] = [
 export default function Landing() {
   return (
     <>
-      {/* Centrado en móvil, alineado a la izquierda a partir de tablet. */}
-      <section className="mx-auto flex min-h-dvh max-w-[560px] flex-col justify-center gap-6 px-6 py-12 text-center sm:gap-7 sm:text-left">
-        <img src="/favicon.svg" alt="" className="mx-auto h-14 w-14 rounded-xl sm:mx-0" />
+      {/*
+        Móvil: una columna centrada, con el chat debajo.
+        Escritorio: texto a la izquierda y el chat a la derecha, reproduciéndose.
+      */}
+      <section className="mx-auto grid min-h-dvh max-w-[1080px] items-center gap-12 px-6 py-12 lg:grid-cols-[1fr_380px] lg:gap-16">
+        <div className="flex flex-col gap-6 text-center sm:gap-7 lg:text-left">
+          {/* En escritorio el icono ya está en la pestaña; aquí solo estorbaría. */}
+          <img src="/favicon.svg" alt="" className="mx-auto h-14 w-14 rounded-xl lg:hidden" />
 
-        <h1 className="text-[38px] font-extrabold leading-[1.08] tracking-tight text-balance sm:text-5xl">
+          <h1 className="text-[38px] font-extrabold leading-[1.08] tracking-tight text-balance sm:text-5xl">
           Cuenta una idea. Que alguien se venga arriba, para variar.
         </h1>
 
@@ -102,7 +107,7 @@ export default function Landing() {
         </p>
 
         {/* Apilados y a ancho completo en móvil; en fila y al contenido en escritorio. */}
-        <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="flex flex-col gap-3 sm:flex-row lg:justify-start">
           <Link
             href="/chat"
             className="rounded-full bg-acento px-7 py-[14px] text-center text-[16px] font-medium text-white"
@@ -120,13 +125,14 @@ export default function Landing() {
           </a>
         </div>
 
-        <p className="text-[13px] text-texto-suave text-pretty">
-          O clónatelo y ejecútalo gratis con tu propia clave. El código está abierto, los personajes
-          también.
-        </p>
-      </section>
+          <p className="text-[13px] text-texto-suave text-pretty">
+            O clónatelo y ejecútalo gratis con tu propia clave. El código está abierto, los personajes
+            también.
+          </p>
+        </div>
 
-      <DemoScroll />
+        <DemoChat />
+      </section>
 
       <section className="mx-auto flex max-w-[560px] flex-col gap-6 px-6 py-20">
         <h2 className="text-[26px] font-extrabold tracking-tight">Quiénes están en el grupo</h2>

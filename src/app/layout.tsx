@@ -4,7 +4,8 @@ import './globals.css'
 export const metadata: Metadata = {
   title: 'Palmaditas',
   description: 'Un grupo de chat donde cuatro personajes se emocionan con tu idea.',
-  icons: { icon: '/favicon.svg' },
+  // El favicon lo resuelve `src/app/icon.svg` por convención del App Router.
+  // `public/favicon.svg` se queda como el mismo dibujo servido para el avatar del grupo.
 }
 
 export const viewport: Viewport = {
