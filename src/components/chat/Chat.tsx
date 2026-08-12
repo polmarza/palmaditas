@@ -34,6 +34,12 @@ export function Chat() {
   const contador = useRef(0)
   /** La tanda anterior fue una comprobación: el siguiente mensaje es la respuesta. */
   const traComprobacion = useRef(false)
+  /**
+   * Identificador aleatorio de esta conversación, solo para agrupar métricas.
+   * No identifica a nadie y se pierde al recargar; no viaja nada del contenido.
+   */
+  const sesion = useRef<string>('')
+  if (sesion.current === '') sesion.current = crypto.randomUUID()
   const finRef = useRef<HTMLDivElement>(null)
   const temporizadores = useRef<ReturnType<typeof setTimeout>[]>([])
 
@@ -116,8 +122,16 @@ export function Chat() {
         body: JSON.stringify({
           historial: historial.current,
           traComprobacion: traComprobacion.current,
+          sesion: sesion.current,
         }),
       })
+
+      if (respuesta.status === 429) {
+        historial.current.pop()
+        setError('Vas muy rápido. Dales un respiro al grupo y vuelve en un momento.')
+        setOcupado(false)
+        return
+      }
 
       if (!respuesta.ok) throw new Error('Respuesta con error')
 

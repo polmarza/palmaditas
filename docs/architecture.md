@@ -334,6 +334,25 @@ previo para que un mensaje caro no deje el saldo en negativo relevante), y hay q
 estimación de mensajes que es aproximada por definición — si se desvía mucho del consumo real, el
 usuario notará que el contador baja a saltos.
 
+### 2026-08-12 — Las fuentes se sanean en el servidor, no se piden por prompt
+
+**Contexto:** en la primera conversación real, sin ninguna mención y por tanto sin búsqueda
+declarada, Bego dio una cifra **con fuente enlazada**: citó una asociación con el nombre mal y una
+URL que se acababa de inventar. El prompt lo prohibía explícitamente.
+
+**Decisión:** si en una tanda no se activó la búsqueda, el servidor pone `fuente: null` en todos los
+mensajes antes de devolverlos. La regla se mantiene también en el prompt, pero la garantía está en el
+código.
+
+**Por qué importa:** un prompt es una petición, no un contrato. Para casi todo lo demás del producto
+eso basta —si un personaje se sale de tono, se nota y ya está—, pero una cifra con un enlace inventado
+es lo único que este chat puede producir capaz de hacer daño de verdad, y es indistinguible de un dato
+real para quien lo lee. Lo que no puede fallar no se pide: se impone.
+
+**Consecuencias:** ninguna respuesta puede llevar fuente sin haber buscado, haga lo que haga el
+modelo. A cambio, si algún día se añade otra vía de búsqueda hay que acordarse de reflejarla aquí, o
+el saneado la borrará.
+
 ### 2026-08-12 — La búsqueda solo se activa al etiquetar a alguien
 
 **Contexto:** con la búsqueda web declarada en todas las tandas, la primera medición dio 12.971

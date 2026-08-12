@@ -119,8 +119,19 @@ export async function generarTanda(
 
     const { mensajes: tanda } = JSON.parse(bloque.text) as { mensajes: MensajeElenco[] }
 
+    // Si no hubo búsqueda, no puede haber fuente: cualquier URL vendría de la
+    // memoria del modelo, y una cifra con enlace inventado es lo único de este
+    // producto capaz de hacer daño de verdad.
+    //
+    // El prompt ya lo prohíbe, pero un prompt es una petición, no una garantía:
+    // en la primera conversación real Bego citó una asociación que no existe
+    // con ese nombre y un enlace que se acababa de inventar. Esto lo cierra.
+    const saneada = puedeBuscar
+      ? tanda
+      : tanda.map((mensaje) => ({ ...mensaje, fuente: null }))
+
     return {
-      mensajes: tanda,
+      mensajes: saneada,
       busquedas,
       mencion,
       tokens: { entrada, salida },

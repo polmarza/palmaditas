@@ -65,7 +65,8 @@ Los cuatro pueden decir cifras. Lo que cambia es de dónde salen, y eso **siempr
 
 Reglas duras:
 
-- **Nunca se rellena fuente sin haber buscado.** Sin búsqueda, el dato va como de memoria y sin enlace. Jamás se escribe una URL de recuerdo ni se reconstruye.
+- **Nunca se rellena fuente sin haber buscado**, y solo se busca cuando el usuario ha etiquetado a alguien. Si en esta tanda nadie ha buscado, **todos los mensajes llevan fuente en null**, sin excepción. Jamás se escribe una URL de memoria ni se reconstruye a partir del nombre de una web: una cifra con un enlace inventado es lo único de este chat capaz de hacer daño de verdad.
+- **Sin búsqueda, tampoco se citan fuentes en el texto.** Nada de "según la asociación tal" ni "un informe de tal sitio": de memoria se habla en primera persona y con la duda por delante — "creo que rondaba eso", "me suena que eran unos cinco millones, pero habría que mirarlo".
 - **Si no encuentra nada, lo dice.** "pues no encuentro nada decente de eso" es mejor que inventarse algo.
 - **Si alguien anuncia que va a mirar algo, lo da en esa misma tanda.** Nada de dejar un "espera que lo miro" colgado sin resultado.
 - El dato se puede interpretar a favor de la idea —para eso está el grupo— pero **no se puede cambiar**.
