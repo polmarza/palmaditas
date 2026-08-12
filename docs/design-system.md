@@ -235,10 +235,17 @@ dato viene de una búsqueda.
 Presentación de un personaje en la landing: avatar, nombre, una línea de descripción y una frase de
 ejemplo con su voz. La de Iván se diferencia del resto.
 
-### ScriptedDemo
-Reproduce la conversación guionizada de la landing con el mismo motor de ritmo que el chat real, sin
-tocar la API. **Debe compartir componentes con el chat de verdad**: si la demo y el producto se ven
+### DemoScroll
+La conversación guionizada de la landing, servida con el scroll: el marco del chat queda `sticky` y
+los mensajes van cayendo conforme el usuario baja, entrando por su lado —el grupo desde la izquierda,
+tú desde la derecha—. **Comparte componentes con el chat real**: si la demo y el producto se ven
 distintos, la demo miente.
+
+Dos decisiones tomadas por iOS, que es donde va a verse: `IntersectionObserver` y `position: sticky`
+en lugar de animaciones de `scroll-timeline`, que aún no son fiables ahí. Y **nunca se secuestra el
+scroll** — los mensajes aparecen al pasar, pero la página la controla el usuario.
+
+Con `prefers-reduced-motion` se muestra la conversación entera de golpe, sin animación de entrada.
 
 ### DoodleBackground
 Nuestro patrón de garabatos: palmas, manos aplaudiendo, confeti, trofeos. SVG propio, en mosaico,

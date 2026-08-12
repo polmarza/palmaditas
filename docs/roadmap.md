@@ -40,7 +40,7 @@ todavía.
       batería de 32 casos (`pnpm test:salvaguarda`)
 - [x] **Salvaguarda calibrada:** 44 casos, cero fallos graves. Tres niveles — el grupo pregunta en la
       zona gris en vez de aplaudir o cortar. **Deja de ser bloqueante**
-- [ ] Landing con la demo guionizada (ahora hay una provisional que presenta al elenco)
+- [x] Landing con la demo guionizada servida por el scroll, el elenco y los enlaces al repositorio
 - [ ] Despliegue en Vercel con el dominio
 
 **Objetivo de validación:** enseñárselo a diez personas y ver si comparten una captura sin que se lo
