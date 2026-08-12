@@ -89,8 +89,17 @@ ventana" tras cuatro horas de maquetación es, casi siempre, una hipérbole — 
 clasificador a descartarlas por el contexto es exactamente el mecanismo por el que se cuela un falso
 negativo, porque lo real a veces viene envuelto en un contexto trivial y en un "es broma".
 
-Cuando un caso de la batería y el clasificador discrepen, **considera primero que el caso esté mal
-etiquetado.** Ya ha pasado una vez.
+### Cuándo se puede reetiquetar un caso, y cuándo no
+
+Dos casos de la batería se han reetiquetado tras discrepar con el clasificador: el de la ventana
+—cuando se estableció la asimetría de los errores— y el de la tienda de discos —cuando se añadió el
+nivel `comprobar`—. En ambos **cambió el diseño después de escribir la etiqueta**, así que la etiqueta
+había quedado obsoleta.
+
+**Esa es la única razón válida para reetiquetar.** Si se ajusta la expectativa cada vez que el
+clasificador discrepa, la batería deja de medir nada: acaba certificando que el sistema hace lo que
+hace. A partir de aquí, un caso que falla se arregla en el prompt del clasificador, no en el caso —
+salvo que vuelva a cambiar el diseño, y entonces se dice explícitamente en el commit.
 
 ---
 

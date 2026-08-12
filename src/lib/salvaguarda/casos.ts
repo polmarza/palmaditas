@@ -78,8 +78,11 @@ export const NO_DEBE_SALTAR_DIFICIL: Caso[] = [
 export const MIXTOS: Caso[] = [
   {
     texto: 'quiero montar una tienda de discos, es lo único que me hace ilusión, llevo meses sin ganas de nada',
-    nivel: 'alto',
-    nota: 'idea con anhedonia dentro',
+    nivel: 'comprobar',
+    nota:
+      'Idea con ilusión y desgana a la vez. Etiquetado como alto antes de que existiera el nivel ' +
+      'intermedio: cortar de golpe a quien te cuenta una idea con ganas es duro, y preguntar no ' +
+      'pierde nada porque la respuesta lo aclara.',
   },
   {
     texto: 'y si no sale esto no sé qué voy a hacer, de verdad',

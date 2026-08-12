@@ -38,8 +38,8 @@ todavía.
 - [x] Aviso permanente de que es humor y de que solo los mensajes con enlace llevan datos
 - [x] **Salvaguarda** (FLOW-04): clasificador previo, respuesta del sistema visualmente distinta y
       batería de 32 casos (`pnpm test:salvaguarda`)
-- [ ] **Calibrar la salvaguarda con la batería.** Sigue siendo bloqueante: implementada no es lo
-      mismo que calibrada, y el criterio es cero falsos negativos
+- [x] **Salvaguarda calibrada:** 44 casos, cero fallos graves. Tres niveles — el grupo pregunta en la
+      zona gris en vez de aplaudir o cortar. **Deja de ser bloqueante**
 - [ ] Landing con la demo guionizada (ahora hay una provisional que presenta al elenco)
 - [ ] Despliegue en Vercel con el dominio
 
