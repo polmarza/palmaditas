@@ -9,7 +9,13 @@
  */
 
 import { clasificar } from '../src/lib/salvaguarda/clasificar'
-import { DEBE_SALTAR, NO_DEBE_SALTAR_DIFICIL, NO_DEBE_SALTAR_FACIL, type Caso } from '../src/lib/salvaguarda/casos'
+import {
+  DEBE_SALTAR,
+  MIXTOS,
+  NO_DEBE_SALTAR_DIFICIL,
+  NO_DEBE_SALTAR_FACIL,
+  type Caso,
+} from '../src/lib/salvaguarda/casos'
 
 const VERDE = '\x1b[32m'
 const ROJO = '\x1b[31m'
@@ -34,13 +40,14 @@ async function grupo(nombre: string, casos: Caso[]): Promise<Resultado[]> {
   // En serie a propósito: son pocos casos y así el orden de salida es legible.
   const resultados: Resultado[] = []
   for (const caso of casos) {
-    const { sensible } = await clasificar(caso.texto)
+    const { sensible } = await clasificar(caso.texto, caso.previos)
     const acierto = sensible === caso.sensible
     resultados.push({ caso, obtenido: sensible, acierto })
 
     const marca = acierto ? `${VERDE}✓${RESET}` : `${ROJO}✗${RESET}`
     const recorte = caso.texto.length > 62 ? `${caso.texto.slice(0, 62)}…` : caso.texto
-    console.log(`  ${marca} ${recorte}`)
+    const conContexto = caso.previos ? `${GRIS} +ctx${RESET}` : ''
+    console.log(`  ${marca} ${recorte}${conContexto}`)
     if (!acierto) {
       console.log(
         `    ${ROJO}esperado ${caso.sensible ? 'sensible' : 'normal'}, ` +
@@ -54,14 +61,17 @@ async function grupo(nombre: string, casos: Caso[]): Promise<Resultado[]> {
 const debeSaltar = await grupo('Debe saltar', DEBE_SALTAR)
 const facil = await grupo('No debe saltar — fácil', NO_DEBE_SALTAR_FACIL)
 const dificil = await grupo('No debe saltar — difícil', NO_DEBE_SALTAR_DIFICIL)
+const mixtos = await grupo('Mixtos y dependientes del contexto', MIXTOS)
 
-const falsosNegativos = debeSaltar.filter((r) => !r.acierto).length
-const falsosPositivos = [...facil, ...dificil].filter((r) => !r.acierto).length
-const totalNoSensibles = facil.length + dificil.length
+const todos = [...debeSaltar, ...facil, ...dificil, ...mixtos]
+const falsosNegativos = todos.filter((r) => r.caso.sensible && !r.acierto).length
+const falsosPositivos = todos.filter((r) => !r.caso.sensible && !r.acierto).length
+const totalSensibles = todos.filter((r) => r.caso.sensible).length
+const totalNoSensibles = todos.length - totalSensibles
 
 console.log(`\n${NEGRITA}Resumen${RESET}`)
 console.log(
-  `  Falsos negativos: ${falsosNegativos === 0 ? VERDE : ROJO}${falsosNegativos}/${DEBE_SALTAR.length}${RESET}` +
+  `  Falsos negativos: ${falsosNegativos === 0 ? VERDE : ROJO}${falsosNegativos}/${totalSensibles}${RESET}` +
     `${GRIS}  (el grupo aplaudiendo algo que no debía)${RESET}`,
 )
 console.log(

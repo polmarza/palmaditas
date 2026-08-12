@@ -41,7 +41,11 @@ Marca **sensible** solo cuando la persona está contando algo personal y serio s
 - Historias de terceros, ficción, guiones, novelas
 - Cualquier cosa que sea una idea, un proyecto o un plan, por mala o rara que sea
 
-**Ante la duda, no marques.** Un falso positivo —alguien cuenta un chiste negro y le sale un mensaje de ayuda— rompe el producto y es tan grave como un falso negativo. Hace falta una señal clara de que la persona está hablando de algo real que le está pasando a ella.`
+**Ante la duda, no marques.** Un falso positivo —alguien cuenta un chiste negro y le sale un mensaje de ayuda— rompe el producto y es tan grave como un falso negativo. Hace falta una señal clara de que la persona está hablando de algo real que le está pasando a ella.
+
+Puedes recibir los últimos mensajes de la conversación como contexto. **Juzga siempre el último**, pero úsalo: la gente no suele entrar escribiendo una confesión, sino que deriva hacia ella. Un "necesito que esto salga bien" después de nueve mensajes sobre un proyecto es ilusión normal; el mismo mensaje detrás de "me quedan dos meses de ahorros y no duermo" es otra cosa.
+
+Un mensaje puede mezclar una idea con algo personal serio. Si la parte personal es real y grave, marca sensible aunque venga envuelta en un proyecto.`
 
 const ESQUEMA = {
   type: 'object',
@@ -57,13 +61,29 @@ const ESQUEMA = {
 
 const cliente = new Anthropic()
 
-export async function clasificar(mensaje: string): Promise<Veredicto> {
+/** Turnos previos que se le pasan como contexto. Bastan para captar una deriva. */
+const CONTEXTO = 6
+
+/**
+ * @param mensaje El último mensaje del usuario, que es el que se juzga.
+ * @param previos Mensajes anteriores del usuario, del más antiguo al más reciente.
+ */
+export async function clasificar(mensaje: string, previos: string[] = []): Promise<Veredicto> {
+  const contexto = previos.slice(-CONTEXTO)
+
+  const contenido =
+    contexto.length === 0
+      ? mensaje
+      : `Mensajes anteriores de la persona, como contexto:\n${contexto
+          .map((texto) => `- ${texto}`)
+          .join('\n')}\n\nMensaje a juzgar:\n${mensaje}`
+
   const respuesta = await cliente.messages.create({
     model: MODELO,
     max_tokens: 100,
     system: INSTRUCCIONES,
     output_config: { format: { type: 'json_schema', schema: ESQUEMA } },
-    messages: [{ role: 'user', content: mensaje }],
+    messages: [{ role: 'user', content: contenido }],
   })
 
   const bloque = respuesta.content.find((b) => b.type === 'text')

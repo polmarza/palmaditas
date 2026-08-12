@@ -30,8 +30,15 @@ export async function POST(peticion: Request) {
   }
 
   // La salvaguarda va antes de generar nada: si salta, el grupo no responde.
+  // Se le pasan los mensajes previos del usuario porque nadie entra escribiendo
+  // una confesión: se deriva hacia ella a lo largo de la conversación.
+  const previos = historial
+    .filter((turno) => turno.rol === 'usuario')
+    .slice(0, -1)
+    .map((turno) => turno.contenido)
+
   try {
-    const { sensible, categoria } = await clasificar(ultimo.contenido)
+    const { sensible, categoria } = await clasificar(ultimo.contenido, previos)
     if (sensible) {
       return Response.json({ sistema: respuestaDelSistema(categoria) })
     }

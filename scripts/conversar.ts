@@ -111,7 +111,11 @@ while (true) {
 
   // La salvaguarda va antes de generar nada. Si salta, el grupo no responde.
   try {
-    const { sensible, categoria } = await clasificar(entrada)
+    const previos = historial
+      .filter((turno) => turno.rol === 'usuario')
+      .slice(0, -1)
+      .map((turno) => turno.contenido)
+    const { sensible, categoria } = await clasificar(entrada, previos)
     if (sensible) {
       historial.pop()
       process.stdout.write('\r\x1b[K')
