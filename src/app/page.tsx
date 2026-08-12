@@ -12,15 +12,15 @@ const ELENCO: Record<string, { etiqueta: string; descripcion: string }> = {
   },
   nacho: {
     etiqueta: 'el visionario',
-    descripcion: 'Ya te ve levantando una ronda y saliendo a bolsa.',
+    descripcion: 'Ya te ve levantando una ronda.',
   },
   bego: {
     etiqueta: 'la de los datos',
-    descripcion: 'Si la etiquetas, los busca de verdad y te deja el enlace.',
+    descripcion: 'Si la etiquetas, busca de verdad.',
   },
   ivan: {
     etiqueta: 'el hater',
-    descripcion: 'El único que pone una pega. Los otros tres se le echan encima.',
+    descripcion: 'El único que pone una pega.',
   },
 }
 
@@ -134,19 +134,39 @@ export default function Landing() {
         <DemoChat />
       </section>
 
+      {/*
+        Presentado como la pantalla de "info del grupo" de una app de
+        mensajería: avatar, nombre y su estado debajo. Refuerza el clon en lugar
+        de romperlo, y evita las cuatro fichas apiladas, que se leían como un
+        formulario.
+      */}
       <section className="mx-auto flex max-w-[560px] flex-col gap-6 px-6 py-20">
-        <h2 className="text-[26px] font-extrabold tracking-tight">Quiénes están en el grupo</h2>
+        <div>
+          <h2 className="text-[26px] font-extrabold tracking-tight">Quiénes están en el grupo</h2>
+          <p className="mt-1 text-[13px] text-texto-suave">4 participantes</p>
+        </div>
 
-        <ul className="flex flex-col gap-3">
+        <ul className="-mx-2">
           {ORDEN.map((id) => (
-            <li key={id} className="rounded-lg bg-fondo px-4 py-3">
-              <div className="flex items-baseline gap-2">
-                <span className="text-[15px] font-semibold" style={{ color: PERSONAJES[id].color }}>
-                  {PERSONAJES[id].nombre}
-                </span>
-                <span className="text-[13px] text-texto-suave">· {ELENCO[id]!.etiqueta}</span>
+            <li
+              key={id}
+              className="flex items-center gap-3 border-b px-2 py-3 last:border-b-0"
+              style={{ borderColor: 'var(--color-garabato)' }}
+            >
+              <span
+                aria-hidden
+                className="grid h-11 w-11 shrink-0 place-items-center rounded-full text-[17px] font-medium text-white"
+                style={{ background: PERSONAJES[id].color }}
+              >
+                {PERSONAJES[id].nombre.charAt(0)}
+              </span>
+              <div className="min-w-0">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-[16px] font-medium">{PERSONAJES[id].nombre}</span>
+                  <span className="text-[13px] text-texto-suave">{ELENCO[id]!.etiqueta}</span>
+                </div>
+                <p className="text-[14px] text-texto-suave">{ELENCO[id]!.descripcion}</p>
               </div>
-              <p className="mt-[2px] text-[15px] text-texto-suave">{ELENCO[id]!.descripcion}</p>
             </li>
           ))}
         </ul>
