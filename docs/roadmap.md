@@ -36,8 +36,11 @@ todavía.
       reordenar la tanda, "escribiendo…" en la cabecera con varios nombres a la vez
 - [x] Route handler de chat (`/api/chat`)
 - [x] Aviso permanente de que es humor y de que solo los mensajes con enlace llevan datos
+- [x] **Salvaguarda** (FLOW-04): clasificador previo, respuesta del sistema visualmente distinta y
+      batería de 32 casos (`pnpm test:salvaguarda`)
+- [ ] **Calibrar la salvaguarda con la batería.** Sigue siendo bloqueante: implementada no es lo
+      mismo que calibrada, y el criterio es cero falsos negativos
 - [ ] Landing con la demo guionizada (ahora hay una provisional que presenta al elenco)
-- [ ] **Salvaguarda** (FLOW-04) con su batería de casos límite. **Bloqueante para desplegar**
 - [ ] Despliegue en Vercel con el dominio
 
 **Objetivo de validación:** enseñárselo a diez personas y ver si comparten una captura sin que se lo

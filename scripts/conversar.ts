@@ -15,6 +15,7 @@ import { generarTanda, type Turno } from '../src/lib/elenco/tanda'
 import { compactar, UMBRAL_COMPACTAR } from '../src/lib/elenco/compactar'
 import { GRIS_ANSI, PERSONAJES, RESET_ANSI } from '../src/lib/elenco/personajes'
 import { MENCIONES_DISPONIBLES } from '../src/lib/elenco/menciones'
+import { clasificar, respuestaDelSistema } from '../src/lib/salvaguarda/clasificar'
 
 const NEGRITA = '\x1b[1m'
 const VERDE = '\x1b[32m'
@@ -107,6 +108,24 @@ while (true) {
   transcripcion.push(`**Tú:** ${entrada}\n`)
 
   process.stdout.write(`${GRIS_ANSI}escribiendo…${RESET_ANSI}`)
+
+  // La salvaguarda va antes de generar nada. Si salta, el grupo no responde.
+  try {
+    const { sensible, categoria } = await clasificar(entrada)
+    if (sensible) {
+      historial.pop()
+      process.stdout.write('\r\x1b[K')
+      console.log(`${GRIS_ANSI}${respuestaDelSistema(categoria).replace(/\n/g, `\n`)}${RESET_ANSI}\n`)
+      transcripcion.push(`- _[salvaguarda: el grupo no responde]_\n`)
+      continue
+    }
+  } catch (error) {
+    // Se falla hacia el lado seguro: sin clasificar, no se genera tanda.
+    process.stdout.write('\r\x1b[K')
+    console.error(`\n${GRIS_ANSI}No he podido comprobar el mensaje; no genero respuesta.${RESET_ANSI}\n`)
+    historial.pop()
+    continue
+  }
 
   try {
     const { mensajes, coste, tokens, busquedas } = await generarTanda(historial)

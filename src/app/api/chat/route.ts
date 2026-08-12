@@ -1,7 +1,8 @@
 import { generarTanda, type Turno } from '@/lib/elenco/tanda'
+import { clasificar, respuestaDelSistema } from '@/lib/salvaguarda/clasificar'
 
 /**
- * Genera la tanda del grupo.
+ * Genera la tanda del grupo, con la salvaguarda por delante.
  *
  * La clave de API vive solo aquí: nunca llega al cliente. El historial lo manda
  * el navegador porque no se persiste ninguna conversación (ver
@@ -21,6 +22,23 @@ export async function POST(peticion: Request) {
 
   if (historial.length === 0 || historial.length > 200) {
     return Response.json({ error: 'Historial fuera de rango.' }, { status: 400 })
+  }
+
+  const ultimo = historial.at(-1)
+  if (!ultimo || ultimo.rol !== 'usuario') {
+    return Response.json({ error: 'El último turno debe ser del usuario.' }, { status: 400 })
+  }
+
+  // La salvaguarda va antes de generar nada: si salta, el grupo no responde.
+  try {
+    const { sensible, categoria } = await clasificar(ultimo.contenido)
+    if (sensible) {
+      return Response.json({ sistema: respuestaDelSistema(categoria) })
+    }
+  } catch (error) {
+    // Se falla hacia el lado seguro: sin clasificar, no se genera tanda.
+    console.error('Fallo en la salvaguarda:', error)
+    return Response.json({ error: 'No he podido comprobar el mensaje.' }, { status: 503 })
   }
 
   try {

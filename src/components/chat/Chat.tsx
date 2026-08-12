@@ -4,13 +4,15 @@ import { useEffect, useRef, useState } from 'react'
 import { ChatHeader } from './ChatHeader'
 import { DoodleBackground } from './DoodleBackground'
 import { MessageBubble } from './MessageBubble'
+import { SystemNotice } from './SystemNotice'
 import { planificar } from '@/lib/elenco/ritmo'
 import type { PersonajeId } from '@/lib/elenco/personajes'
 import type { Fuente, MensajeElenco, Turno } from '@/lib/elenco/tanda'
 
 interface Visible {
   id: number
-  personaje: PersonajeId | 'usuario'
+  /** 'sistema' es la salvaguarda: no lo dice el grupo, y se ve distinto. */
+  personaje: PersonajeId | 'usuario' | 'sistema'
   texto: string
   hora: string
   mono?: boolean
@@ -114,7 +116,23 @@ export function Chat() {
 
       if (!respuesta.ok) throw new Error('Respuesta con error')
 
-      const { mensajes } = (await respuesta.json()) as { mensajes: MensajeElenco[] }
+      const datos = (await respuesta.json()) as {
+        mensajes?: MensajeElenco[]
+        sistema?: string
+      }
+
+      // Ha saltado la salvaguarda: el grupo no responde y no hay tanda que desplegar.
+      if (datos.sistema) {
+        historial.current.pop()
+        setVisibles((previos) => [
+          ...previos,
+          { id: contador.current++, personaje: 'sistema', texto: datos.sistema!, hora: ahora() },
+        ])
+        setOcupado(false)
+        return
+      }
+
+      const mensajes = datos.mensajes ?? []
       historial.current.push({ rol: 'grupo', contenido: JSON.stringify({ mensajes }) })
       desplegar(mensajes)
     } catch {
@@ -139,17 +157,21 @@ export function Chat() {
             </p>
           )}
 
-          {visibles.map((mensaje, indice) => (
-            <MessageBubble
-              key={mensaje.id}
-              personaje={mensaje.personaje}
-              texto={mensaje.texto}
-              hora={mensaje.hora}
-              mono={mensaje.mono}
-              fuente={mensaje.fuente}
-              primeroDelBloque={visibles[indice - 1]?.personaje !== mensaje.personaje}
-            />
-          ))}
+          {visibles.map((mensaje, indice) =>
+            mensaje.personaje === 'sistema' ? (
+              <SystemNotice key={mensaje.id} texto={mensaje.texto} />
+            ) : (
+              <MessageBubble
+                key={mensaje.id}
+                personaje={mensaje.personaje}
+                texto={mensaje.texto}
+                hora={mensaje.hora}
+                mono={mensaje.mono}
+                fuente={mensaje.fuente}
+                primeroDelBloque={visibles[indice - 1]?.personaje !== mensaje.personaje}
+              />
+            ),
+          )}
 
           {error && (
             <p className="mx-3 rounded-lg bg-entrante px-3 py-2 text-[13px] text-error">{error}</p>

@@ -10,6 +10,7 @@
     "build": "next build",
     "start": "next start",
     "elenco": "tsx --env-file=.env.local scripts/conversar.ts",
+    "test:salvaguarda": "tsx --env-file=.env.local scripts/probar-salvaguarda.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
