@@ -1,0 +1,86 @@
+@import 'tailwindcss';
+
+/*
+ * Tokens del design system. Ver docs/design-system.md.
+ * Modo claro es la identidad; el oscuro llegará después.
+ */
+@theme {
+  --color-fondo: #efe7de;
+  --color-garabato: #d8cec3;
+  --color-entrante: #ffffff;
+  --color-saliente: #dcf8c6;
+  --color-barra: #f0f2f5;
+  --color-texto: #111b21;
+  --color-texto-suave: #667781;
+  --color-acento: #25955d;
+  --color-check: #53bdeb;
+  --color-error: #c0392b;
+
+  /* El único color frío del grupo es el de Iván, y es deliberado. */
+  --color-rosa: #e542a3;
+  --color-nacho: #dfa33b;
+  --color-bego: #d9603a;
+  --color-ivan: #5e8fa8;
+
+  /* Fuentes de sistema a propósito: una tipografía con carácter delataría el clon. */
+  --font-chat: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  --font-mono: 'SF Mono', 'Roboto Mono', ui-monospace, monospace;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-chat);
+  color: var(--color-texto);
+  background: var(--color-fondo);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* La sombra que da el relieve característico a las burbujas. */
+.burbuja {
+  box-shadow: 0 1px 0.5px rgb(0 0 0 / 0.13);
+}
+
+@keyframes entrada-burbuja {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.burbuja-entra {
+  animation: entrada-burbuja 180ms ease-out;
+}
+
+@keyframes punto {
+  0%,
+  60%,
+  100% {
+    opacity: 0.25;
+  }
+  30% {
+    opacity: 1;
+  }
+}
+
+.punto {
+  animation: punto 1.2s infinite;
+}
+
+/*
+ * Se desactivan las animaciones, nunca los retardos entre mensajes: el
+ * escalonado no es una animación, es la conversación.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .burbuja-entra,
+  .punto {
+    animation: none;
+  }
+}

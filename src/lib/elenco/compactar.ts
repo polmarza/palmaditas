@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
-import type { Turno } from './tanda.js'
+import type { Turno } from './tanda'
 
 /**
  * Compactación del historial.

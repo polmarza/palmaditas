@@ -28,15 +28,16 @@ gracia. Si solo funciona gracias a la animación, el producto es un truco y se a
 Palmaditas funcionando de verdad, en local y desplegado, con la clave de API propia. Sin cobrar
 todavía.
 
-- [ ] Proyecto Next.js + Tailwind + shadcn/ui + AI Elements
-- [ ] Componentes del chat: `MessageBubble`, `ChatHeader`, `DoodleBackground`
-- [ ] **Favicon**: SVG propio dibujado imitando el emoji de palmadas (👏). Dibujado por nosotros, no
-      copiado de ningún set de emojis con licencia propietaria
-- [ ] Orquestador de ritmo: retardos y velocidades por personaje, escalonado, "escribiendo…" en la
-      cabecera con varios nombres a la vez
-- [ ] Route handler de chat, con streaming
-- [ ] **Salvaguarda** (FLOW-04) con su batería de casos límite. **Bloqueante**
-- [ ] Aviso permanente de que es humor y nada de lo que dicen es real
+- [x] Proyecto Next.js 16 + Tailwind v4 con los tokens del design system
+- [x] Componentes del chat: `MessageBubble`, `ChatHeader`, `DoodleBackground`, `Chat`
+- [x] **Favicon**: SVG propio dibujado imitando el emoji de palmadas (👏), con formas rellenas para
+      que se lea a 16px. Sirve también de avatar del grupo
+- [x] Orquestador de ritmo (`lib/elenco/ritmo.ts`): pausas y velocidades por personaje, sin
+      reordenar la tanda, "escribiendo…" en la cabecera con varios nombres a la vez
+- [x] Route handler de chat (`/api/chat`)
+- [x] Aviso permanente de que es humor y de que solo los mensajes con enlace llevan datos
+- [ ] Landing con la demo guionizada (ahora hay una provisional que presenta al elenco)
+- [ ] **Salvaguarda** (FLOW-04) con su batería de casos límite. **Bloqueante para desplegar**
 - [ ] Despliegue en Vercel con el dominio
 
 **Objetivo de validación:** enseñárselo a diez personas y ver si comparten una captura sin que se lo

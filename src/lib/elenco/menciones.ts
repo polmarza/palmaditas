@@ -1,4 +1,4 @@
-import { ORDEN, PERSONAJES, type PersonajeId } from './personajes.js'
+import { ORDEN, PERSONAJES, type PersonajeId } from './personajes'
 
 /**
  * Menciones al estilo de WhatsApp: "@Bego mírame esto".

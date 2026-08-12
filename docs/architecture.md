@@ -10,7 +10,7 @@ decisión técnica relevante. Los cambios deben registrarse también en `changel
 | Capa | Tecnología | Justificación |
 |------|-----------|---------------|
 | Framework | **Next.js (App Router)** + TypeScript | Route handlers para la orquestación en servidor, streaming nativo, y es donde encaja AI Elements |
-| Estilos | **Tailwind CSS + shadcn/ui + AI Elements** | AI Elements (Vercel) aporta hilo de mensajes, streaming y scroll anclado ya resueltos. Sobre shadcn/ui, así que el design system se aplica con tokens propios |
+| Estilos | **Tailwind CSS v4**, sin librería de componentes | Tokens del design system en `@theme`. Los componentes del chat se escriben a mano: son cuatro y son simples (ver decisión más abajo) |
 | Modelo | **Claude Haiku 4.5** (`claude-haiku-4-5`) vía SDK oficial | Rápido y barato. La calidad que pide el producto es tono y ritmo, no razonamiento profundo |
 | Base de datos | **Supabase (Postgres)** | Una única tabla para el saldo. Elegido por familiaridad y porque el MCP permite operar el esquema desde el editor |
 | Pagos | **Sin decidir** — tras un adaptador | El mecanismo es idéntico en Stripe / Lemon Squeezy / BMC; la decisión es fiscal, no técnica (ver `business.md`) |
@@ -250,6 +250,24 @@ el cliente. El coste es perder el saldo al borrar cookies, mitigado con el enlac
 **Decisión:** (b). Ver la sección "La salvaguarda" arriba.
 **Consecuencias:** una llamada extra por mensaje (~15 % más de coste, despreciable) y una batería de
 casos límite que mantener. **Bloqueante para el lanzamiento.**
+
+### 2026-08-12 — Sin AI Elements ni AI SDK: los componentes a mano
+
+**Contexto:** el stack inicial preveía AI Elements (Vercel) sobre shadcn/ui para el hilo de mensajes.
+Al implementar quedó claro que no encaja.
+
+**Por qué no encaja:** AI Elements está construido alrededor de `useChat` del AI SDK, que modela un
+asistente único respondiendo con streaming token a token. Palmaditas no funciona así: recibe una
+**tanda completa en JSON** y la suelta escalonada desde el cliente con su propio orquestador de
+ritmo. No hay streaming de texto que renderizar, hay temporizadores. Adoptar la librería obligaría a
+pelearse con su modelo mental para acabar usando solo el contenedor de scroll.
+
+**Decisión:** Tailwind v4 con los tokens del design system en `@theme`, y los componentes del chat
+escritos a mano. Son cuatro —`MessageBubble`, `ChatHeader`, `DoodleBackground`, `Chat`— y ninguno es
+complicado.
+**Consecuencias:** menos dependencias y control total sobre el clon visual, que es un requisito del
+producto y no algo que una librería genérica vaya a acertar. A cambio, el scroll anclado y el
+autoajuste del campo de texto los mantenemos nosotros.
 
 ### 2026-08-12 — Compactación del historial y degradación por saldo
 

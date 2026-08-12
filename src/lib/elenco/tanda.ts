@@ -1,7 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk'
-import { ESQUEMA_TANDA, systemPara } from './prompt.js'
-import { detectarMencion } from './menciones.js'
-import { PERSONAJES, type PersonajeId } from './personajes.js'
+import { ESQUEMA_TANDA, systemPara } from './prompt'
+import { detectarMencion } from './menciones'
+import { PERSONAJES, type PersonajeId } from './personajes'
 
 /** Haiku 4.5: rápido y barato. Lo que pide el producto es tono y ritmo, no razonamiento profundo. */
 export const MODELO = 'claude-haiku-4-5'

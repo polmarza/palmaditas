@@ -2,10 +2,10 @@
 
 Un grupo de chat donde cuatro personajes se emocionan con tu idea.
 
-> ⚠️ **Estado: Fase 0.** La documentación está completa en [`docs/`](./docs) y **el elenco ya se
-> puede probar desde el terminal** (`pnpm elenco`). Todavía no hay web: ni interfaz, ni pagos, ni
-> base de datos. Antes de construir nada de eso hay que responder a una pregunta — ¿los cuatro
-> personajes tienen gracia durante quince mensajes seguidos?
+> ⚠️ **Estado: Fase 1.** El chat funciona en local (`pnpm dev`) y el elenco también se puede probar
+> desde el terminal (`pnpm elenco`). Todavía **no hay pagos, ni base de datos, ni la salvaguarda para
+> mensajes sensibles** — esto último es bloqueante antes de cualquier despliegue público. La
+> documentación completa está en [`docs/`](./docs).
 
 ---
 
@@ -62,21 +62,28 @@ pnpm install
 cp .env.example .env.local
 ```
 
-Pon tu `ANTHROPIC_API_KEY` en `.env.local` y habla con el elenco:
+Pon tu `ANTHROPIC_API_KEY` en `.env.local` y arranca la web:
+
+```bash
+pnpm dev
+```
+
+En [localhost:3000](http://localhost:3000). Sin configuración de pasarela de pago arranca en modo
+libre: sin saldo, sin base de datos y sin límite, consumiendo de tu clave.
+
+También puedes hablar con el elenco desde el terminal, sin interfaz:
 
 ```bash
 pnpm elenco
 ```
 
-Se abre una conversación en el terminal: escribes una idea y el grupo responde. **Sin efecto de
-escritura ni retardos, a propósito** — esto sirve para juzgar si los personajes tienen gracia, no si
-la animación funciona. Si solo tiene gracia con la animación, el producto es un truco.
+**Sin efecto de escritura ni retardos, a propósito** — sirve para juzgar si los personajes tienen
+gracia, no si la animación funciona. Cada tanda muestra los tokens y el coste real, y al salir con
+`/salir` se guarda la transcripción en `transcripciones/` (ignorada por git).
 
-Cada tanda muestra los tokens y el coste real, y al salir con `/salir` se guarda la transcripción en
-`transcripciones/` (ignorada por git) para poder releerla con calma.
-
-Cuando exista la web, `pnpm dev` la arrancará en modo libre: sin saldo, sin base de datos y sin
-límite, consumiendo directamente de tu clave.
+En ambos casos puedes etiquetar a alguien con `@`: `@Bego mírame los precios de alquiler`. Contesta
+solo esa persona, y es el único caso en que el grupo busca en internet de verdad — por eso esas
+respuestas llevan la fuente enlazada y cuestan unas cinco veces más.
 
 ### Variables de entorno
 
