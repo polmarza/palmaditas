@@ -250,17 +250,22 @@ monocromo y a baja opacidad. **No usar ningún asset de terceros aquí.**
 
 ### Favicon
 
-**Un SVG propio dibujado imitando el emoji de palmadas (👏).** Es el único elemento de identidad de
-marca del producto y funciona por sí solo: en una pestaña, junto a un enlace compartido o en la
-pantalla de inicio de un móvil, dos manos aplaudiendo dicen exactamente lo que hace esto.
+**El destello del aplauso: ocho rayitas blancas alrededor de un hueco, sobre el verde de acento.**
+No hay manos dibujadas — solo el efecto. Es el único elemento de identidad de marca del producto y
+funciona en pestaña, en un enlace compartido y en la pantalla de inicio de un móvil.
 
-- **Dibujado por nosotros, no exportado de un set de emojis.** Los emojis de Apple son propietarios;
-  otros conjuntos tienen licencias que obligan a atribución. Dibujar dos manos aplaudiendo desde
-  cero evita el problema entero y permite ajustarlo a nuestra paleta.
-- SVG, legible a 16px: formas simples, sin degradados ni detalle fino que se pierda al reducir.
+- **Dibujado por nosotros.** Sin assets de terceros, sin emojis exportados —los de Apple son
+  propietarios y otros conjuntos piden atribución— y sin nada que licenciar en un repositorio
+  público.
+- **Trazo grueso y rayitas separadas**, porque el tamaño que manda es 16px. Dos intentos anteriores
+  se descartaron por esto: unas manos dibujadas con trazo fino se convierten en una mancha gris a
+  ese tamaño. Lo que sobrevive son pocas formas, gruesas y espaciadas.
 - Sirve también como avatar del grupo en la cabecera del chat, que es donde más se va a ver.
 
-Encaja además con el patrón de fondo, que usa los mismos motivos: manos, palmas, confeti.
+Se descartó una variante asimétrica que se leía más claramente como aplauso y menos como sol; la
+simétrica es más limpia y más estable a tamaño pequeño.
+
+El patrón de fondo sigue usando manos y palmas dibujadas, que ahí sí tienen sitio para leerse.
 
 ---
 

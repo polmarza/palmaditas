@@ -1,19 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <!--
-    Manos aplaudiendo, dibujadas por nosotros. No exportado de ningún set de
-    emojis: los de Apple son propietarios y otros piden atribución.
-    Formas rellenas en lugar de trazos: a 16px los trazos finos desaparecen.
+    El destello del aplauso: ocho rayitas alrededor de un hueco.
+    Dibujado por nosotros — sin manos, sin assets de terceros, sin licencias.
+    Trazo grueso y rayitas separadas para que sobreviva a 16px, que es el
+    tamaño real en una pestaña. Ver docs/design-system.md.
   -->
   <rect width="64" height="64" rx="14" fill="#25955D" />
-  <g fill="#FFFFFF">
-    <!-- Las dos palmas, encontrándose arriba en el centro -->
-    <rect x="15" y="28" width="17" height="27" rx="8.5" transform="rotate(-20 23.5 41.5)" />
-    <rect x="32" y="28" width="17" height="27" rx="8.5" transform="rotate(20 40.5 41.5)" />
-  </g>
-  <!-- Rayitas de impacto -->
-  <g stroke="#FFFFFF" stroke-width="3.6" stroke-linecap="round">
-    <path d="M32 19V11" />
-    <path d="M18 24l-5-6" />
-    <path d="M46 24l5-6" />
+  <g stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" transform="translate(32 32)">
+    <path d="M0 -22V-13" />
+    <path d="M15.6 -15.6L9.2 -9.2" />
+    <path d="M22 0H13" />
+    <path d="M15.6 15.6L9.2 9.2" />
+    <path d="M0 22V13" />
+    <path d="M-15.6 15.6L-9.2 9.2" />
+    <path d="M-22 0H-13" />
+    <path d="M-15.6 -15.6L-9.2 -9.2" />
   </g>
 </svg>
