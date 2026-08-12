@@ -113,6 +113,10 @@ Reglas transversales del elenco:
 - Respuestas troceadas en mensajes cortos, no en párrafos largos.
 - Indicador "escribiendo…" por personaje, con retardos distintos entre ellos.
 - Los personajes responden en orden variable y se referencian entre sí.
+- **Menciones con `@`**, como en cualquier app de mensajería: escribir `@Bego mírame los precios` hace
+  que conteste solo ella y que los demás se callen. Es la mecánica que hace viable la búsqueda web
+  —solo se activa al etiquetar a Bego— y de paso da al usuario una forma natural de dirigir la
+  conversación.
 - El usuario puede seguir escribiendo mientras el grupo responde.
 - Aviso visible y permanente de que es un producto humorístico y de que nada de lo que dicen los
   personajes es información real.

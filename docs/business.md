@@ -55,11 +55,30 @@ comisión de la pasarela, el IVA según el proveedor que elijamos, y el margen. 
 usuario dispare la factura no existe a esta escala** — para gastar 5 € en tokens tendría que enviar
 del orden de mil mensajes.
 
-> ⚠️ **Falta un coste por medir: las búsquedas web de Bego.** Se facturan aparte de los tokens y no
-> están en la tabla de arriba. El script de conversación ya cuenta cuántas se hacen por tanda; hay
-> que multiplicarlas por la tarifa vigente y sumarlas antes de dar el precio por definitivo. Está
-> acotado a 3 búsquedas por tanda, pero si Bego busca en la mayoría de tandas puede pesar más que
-> los propios tokens.
+### Las tandas con búsqueda cuestan cinco veces más
+
+Medido el mismo día: una tanda **con búsqueda web activa** gasta **12.971 tokens de entrada** frente
+a los 1.881 de una normal, porque los resultados de la búsqueda entran en el contexto. El coste pasa
+de 0,0033 $ a **0,0165 $ por tanda**.
+
+Con la búsqueda activada en todas las tandas, un paquete de 100 mensajes costaría del orden de **2 a
+3 dólares** — la mitad del ingreso, sin contar las búsquedas, que se facturan aparte. **Eso rompería
+el modelo.**
+
+Por eso la búsqueda **solo se activa cuando el usuario etiqueta a Bego** con `@Bego`. Las
+conversaciones normales vuelven a costar 0,0033 $ por tanda, y solo se paga la tanda cara cuando
+alguien pide expresamente que se verifique un dato:
+
+| Uso de `@Bego` | Coste medio por mensaje | Paquete de 100 |
+|---|---|---|
+| Nunca | 0,0033 $ | ~0,50 $ |
+| 1 de cada 10 mensajes | ~0,0046 $ | ~0,70 $ |
+| 1 de cada 4 mensajes | ~0,0066 $ | ~1,00 $ |
+| En todos | 0,0165 $ | ~2,50 $ |
+
+> ⚠️ **Sigue pendiente de medir el precio de la búsqueda en sí**, que se factura aparte de los
+> tokens. El script cuenta cuántas se hacen; hay que multiplicarlas por la tarifa vigente y sumarlas
+> antes de fijar el precio definitivo.
 
 Dos supuestos que ya se han confirmado midiendo:
 

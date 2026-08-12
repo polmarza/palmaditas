@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk'
-import { ESQUEMA_TANDA, SYSTEM_ELENCO } from './prompt.js'
-import type { PersonajeId } from './personajes.js'
+import { ESQUEMA_TANDA, systemPara } from './prompt.js'
+import { detectarMencion } from './menciones.js'
+import { PERSONAJES, type PersonajeId } from './personajes.js'
 
 /** Haiku 4.5: rápido y barato. Lo que pide el producto es tono y ritmo, no razonamiento profundo. */
 export const MODELO = 'claude-haiku-4-5'
@@ -42,18 +43,28 @@ export interface ResultadoTanda {
   tokens: { entrada: number; salida: number }
   /** Búsquedas web realizadas. Tienen coste aparte del de tokens. */
   busquedas: number
+  /** Personaje etiquetado con @, si el usuario se dirigió a alguien. */
+  mencion: PersonajeId | null
 }
 
 const cliente = new Anthropic()
 
 /**
- * Genera una tanda completa: los cuatro personajes en una sola llamada.
+ * Genera una tanda: los personajes que toquen, en una sola llamada.
  *
- * Bego tiene búsqueda web de verdad, así que la llamada puede pausarse mientras
- * el servidor ejecuta las búsquedas (`stop_reason: "pause_turn"`). En ese caso
- * se reenvía la conversación para que continúe donde lo dejó.
+ * **La búsqueda web solo se activa cuando el usuario etiqueta a Bego.** Tenerla
+ * siempre puesta multiplicaba el coste por cinco (12.900 tokens de entrada
+ * frente a 1.900) porque los resultados entran en el contexto. Ver
+ * docs/architecture.md.
+ *
+ * Con búsqueda, la llamada puede pausarse mientras el servidor la ejecuta
+ * (`stop_reason: "pause_turn"`); en ese caso se reenvía para que continúe.
  */
 export async function generarTanda(historial: Turno[]): Promise<ResultadoTanda> {
+  const ultimo = historial.at(-1)
+  const mencion = ultimo?.rol === 'usuario' ? detectarMencion(ultimo.contenido) : null
+  const puedeBuscar = mencion === 'bego'
+
   const mensajes: Anthropic.MessageParam[] = historial.map((turno) => ({
     role: turno.rol === 'usuario' ? ('user' as const) : ('assistant' as const),
     content: turno.contenido,
@@ -67,9 +78,16 @@ export async function generarTanda(historial: Turno[]): Promise<ResultadoTanda> 
     const respuesta = await cliente.messages.create({
       model: MODELO,
       max_tokens: 2000,
-      system: SYSTEM_ELENCO,
+      system: systemPara(mencion ? PERSONAJES[mencion].nombre : null),
       output_config: { format: { type: 'json_schema', schema: ESQUEMA_TANDA } },
-      tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: MAX_BUSQUEDAS }],
+      // Solo Bego etiquetada tiene buscador: es el tope de coste y de latencia.
+      ...(puedeBuscar
+        ? {
+            tools: [
+              { type: 'web_search_20250305' as const, name: 'web_search' as const, max_uses: MAX_BUSQUEDAS },
+            ],
+          }
+        : {}),
       messages: mensajes,
     })
 
@@ -97,6 +115,7 @@ export async function generarTanda(historial: Turno[]): Promise<ResultadoTanda> 
     return {
       mensajes: tanda,
       busquedas,
+      mencion,
       tokens: { entrada, salida },
       coste: (entrada / 1e6) * PRECIO.entrada + (salida / 1e6) * PRECIO.salida,
     }

@@ -13,6 +13,7 @@ import { mkdir, writeFile } from 'node:fs/promises'
 import { stdin, stdout } from 'node:process'
 import { generarTanda, type Turno } from '../src/lib/elenco/tanda.js'
 import { GRIS_ANSI, PERSONAJES, RESET_ANSI } from '../src/lib/elenco/personajes.js'
+import { MENCIONES_DISPONIBLES } from '../src/lib/elenco/menciones.js'
 
 const NEGRITA = '\x1b[1m'
 const VERDE = '\x1b[32m'
@@ -39,6 +40,12 @@ ${NEGRITA}Palmaditas${RESET_ANSI} ${GRIS_ANSI}— Fase 0, elenco en bruto${RESET
 
 ${GRIS_ANSI}Escribe una idea y el grupo responde. Sin ritmo ni interfaz: esto es para
 juzgar si los personajes tienen gracia, no si la animación funciona.
+
+Etiqueta a alguien para hablar solo con esa persona:
+  ${MENCIONES_DISPONIBLES}
+
+Solo @Bego busca en internet, y solo cuando la etiquetas. Por eso esas
+tandas cuestan unas cinco veces más que las normales.
 
   /coste    resumen de gasto
   /salir    terminar y guardar la transcripción${RESET_ANSI}

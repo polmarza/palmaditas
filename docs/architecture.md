@@ -247,6 +247,26 @@ el cliente. El coste es perder el saldo al borrar cookies, mitigado con el enlac
 **Consecuencias:** una llamada extra por mensaje (~15 % más de coste, despreciable) y una batería de
 casos límite que mantener. **Bloqueante para el lanzamiento.**
 
+### 2026-08-12 — La búsqueda solo se activa al etiquetar a Bego
+
+**Contexto:** con la búsqueda web declarada en todas las tandas, la primera medición dio 12.971
+tokens de entrada frente a los 1.881 de una tanda normal — los resultados de búsqueda entran en el
+contexto. El coste por tanda se multiplicó por cinco (0,0033 $ → 0,0165 $), lo que situaba un paquete
+de 100 mensajes en 2-3 $ sobre 5 € de ingreso.
+
+Se detectó además un efecto secundario en el guion: Bego escribía "espera que lo miro" y la tanda
+terminaba sin el dato, obligando al usuario a preguntar "¿qué miras?".
+
+**Opciones consideradas:** (a) quitar la búsqueda; (b) dejarla siempre y subir el precio; (c)
+activarla solo bajo demanda del usuario.
+**Decisión:** (c), mediante **menciones con `@`** al estilo de las apps de mensajería. Si el usuario
+escribe `@Bego …`, contesta solo ella y solo entonces tiene buscador. Sin mención no hay herramienta
+declarada, y Bego da datos de memoria diciendo explícitamente que son a bote pronto.
+**Consecuencias:** el coste medio vuelve a ~0,0046 $ por mensaje con un uso razonable de la mención.
+Se gana una mecánica de producto que además da control al usuario, y desaparece el "espera que lo
+miro" sin resultado. A cambio, hay dos modos de Bego que hay que mantener coherentes, y el usuario
+tiene que descubrir que las menciones existen — la interfaz debe hacerlo evidente.
+
 ### 2026-08-12 — Bego busca de verdad, con fuente enlazada
 
 **Contexto:** el diseño original le hacía inventarse estadísticas. En la primera prueba con una idea
