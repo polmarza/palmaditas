@@ -150,7 +150,7 @@ export function Chat() {
   }
 
   return (
-    <div className="flex h-dvh flex-col">
+    <div className="relative flex h-dvh flex-col overflow-hidden">
       <DoodleBackground />
       <ChatHeader tecleando={tecleando} />
 

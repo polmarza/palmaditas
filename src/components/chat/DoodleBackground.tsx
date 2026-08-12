@@ -10,7 +10,7 @@ export function DoodleBackground() {
   return (
     <svg
       aria-hidden
-      className="pointer-events-none fixed inset-0 h-full w-full"
+      className="pointer-events-none absolute inset-0 h-full w-full"
       style={{ color: 'var(--color-garabato)', opacity: 0.35 }}
     >
       <defs>
