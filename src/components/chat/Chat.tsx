@@ -183,16 +183,21 @@ export function Chat() {
 
       <main className="relative flex-1 overflow-y-auto py-3">
         <div className="mx-auto flex max-w-[680px] flex-col gap-[3px]">
+          {/*
+            No se menciona aquí lo de etiquetar con @: sin una idea contada
+            todavía, quien lo probaba de entrada obtenía datos sobre nada.
+            Una función se enseña cuando hay contexto para usarla.
+          */}
           {visibles.length === 0 && (
             <div className="burbuja mx-auto mt-4 flex max-w-[330px] flex-col gap-2 rounded-lg bg-entrante px-4 py-3 text-center text-[13px] leading-relaxed text-texto-suave">
-              <p>Cuéntales una idea. Cualquiera.</p>
+              <p className="text-[15px] font-medium text-texto">Cuéntales tu idea</p>
               <p>
-                Escribe <span className="font-medium text-bego">@Bego</span> —o a quien quieras— para
-                hablar solo con esa persona y que te busque datos de verdad.
+                La que sea: un negocio, un proyecto de fin de semana o algo que se te acaba de
+                ocurrir. El grupo se encarga del resto.
               </p>
               <p>
-                Es humor: el grupo está de tu parte por diseño. Solo los mensajes con enlace llevan
-                datos comprobados.
+                Es humor: están de tu parte por diseño. Solo los mensajes con enlace llevan datos
+                comprobados.
               </p>
             </div>
           )}
