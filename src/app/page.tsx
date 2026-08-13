@@ -98,13 +98,14 @@ export default function Landing() {
           <img src="/favicon.svg" alt="" className="mx-auto h-14 w-14 rounded-xl lg:hidden" />
 
           <h1 className="text-[38px] font-extrabold leading-[1.08] tracking-tight text-balance sm:text-5xl">
-          Cuenta una idea. Que alguien se venga arriba, para variar.
-        </h1>
+            Tu idea es buenísima. Necesitas hype, no feedback.
+          </h1>
 
-        <p className="text-[17px] leading-relaxed text-texto-suave text-pretty">
-          Sueltas una idea en el grupo y lo que vuelve son pegas. A veces las pegas están bien. Y a
-          veces solo querías que alguien se emocionara contigo cinco minutos antes de ponerte a dudar.
-        </p>
+          <p className="text-[17px] leading-relaxed text-texto-suave text-pretty">
+            Dime si no te ha pasado: has tenido una idea buenísima y la sueltas en un grupo de
+            colegas, pero nadie le presta la más mínima atención. Hasta ahora. Entra en el grupo,
+            cuenta tu idea y mira lo que ocurre.
+          </p>
 
         {/* Apilados y a ancho completo en móvil; en fila y al contenido en escritorio. */}
         <div className="flex flex-col gap-3 sm:flex-row lg:justify-start">

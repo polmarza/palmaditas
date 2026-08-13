@@ -1,9 +1,25 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
+const DESCRIPCION =
+  'Tu idea es buenísima. Necesitas hype, no feedback. Cuéntasela a un grupo que está de tu parte.'
+
 export const metadata: Metadata = {
   title: 'Palmaditas',
-  description: 'Un grupo de chat donde cuatro personajes se emocionan con tu idea.',
+  description: DESCRIPCION,
+  // Este producto se difunde compartiendo el enlace, así que la vista previa
+  // importa tanto como la propia página.
+  openGraph: {
+    title: 'Palmaditas',
+    description: DESCRIPCION,
+    type: 'website',
+    locale: 'es_ES',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Palmaditas',
+    description: DESCRIPCION,
+  },
   // El favicon lo resuelve `src/app/icon.svg` por convención del App Router.
   // `public/favicon.svg` se queda como el mismo dibujo servido para el avatar del grupo.
 }
