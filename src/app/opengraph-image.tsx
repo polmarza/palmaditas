@@ -12,8 +12,19 @@ import { ImageResponse } from 'next/og'
  */
 
 export const alt = 'Palmaditas: un grupo de chat donde cuatro amigos se emocionan con tu idea'
-export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
+
+/**
+ * Se dibuja al doble de la medida estándar (1200×630).
+ *
+ * Las plataformas la escalan al ancho de su tarjeta, y en pantallas de alta
+ * densidad eso deja la versión de 1200 blanda. Al doble se ve nítida, y el
+ * archivo sigue siendo pequeño para el tope de 8 MB que admiten.
+ */
+const ESCALA = 2
+const px = (medida: number) => medida * ESCALA
+
+export const size = { width: px(1200), height: px(630) }
 
 const FONDO = '#EFE7DE'
 const ENTRANTE = '#FFFFFF'
@@ -49,15 +60,17 @@ function Burbuja({
           flexDirection: 'column',
           maxWidth: '80%',
           background: propia ? SALIENTE : ENTRANTE,
-          borderRadius: 14,
-          padding: '14px 18px',
-          fontSize: 27,
+          borderRadius: px(14),
+          padding: `${px(14)}px ${px(18)}px`,
+          fontSize: px(27),
           color: TEXTO,
           lineHeight: 1.3,
         }}
       >
         {nombre && (
-          <div style={{ color, fontSize: 22, fontWeight: 600, marginBottom: 4 }}>{nombre}</div>
+          <div style={{ color, fontSize: px(22), fontWeight: 600, marginBottom: px(4) }}>
+            {nombre}
+          </div>
         )}
         {texto}
       </div>
@@ -75,24 +88,24 @@ export default function Imagen() {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
-            width: 510,
-            padding: '0 50px',
+            width: px(510),
+            padding: `0 ${px(50)}px`,
             background: '#FFFFFF',
           }}
         >
           <div
             style={{
               display: 'flex',
-              width: 76,
-              height: 76,
-              borderRadius: 18,
+              width: px(76),
+              height: px(76),
+              borderRadius: px(18),
               background: ACENTO,
               alignItems: 'center',
               justifyContent: 'center',
-              marginBottom: 34,
+              marginBottom: px(34),
             }}
           >
-            <svg width="46" height="46" viewBox="0 0 64 64">
+            <svg width={px(46)} height={px(46)} viewBox="0 0 64 64">
               <g stroke="#FFFFFF" strokeWidth="5" strokeLinecap="round">
                 <path d="M32 10V19" />
                 <path d="M16.4 16.4L22.8 22.8" />
@@ -104,14 +117,14 @@ export default function Imagen() {
             </svg>
           </div>
 
-          <div style={{ fontSize: 45, fontWeight: 800, color: TEXTO, lineHeight: 1.12 }}>
+          <div style={{ fontSize: px(45), fontWeight: 800, color: TEXTO, lineHeight: 1.12 }}>
             Tu idea es buenísima.
           </div>
-          <div style={{ fontSize: 45, fontWeight: 800, color: ACENTO, lineHeight: 1.12 }}>
+          <div style={{ fontSize: px(45), fontWeight: 800, color: ACENTO, lineHeight: 1.12 }}>
             Necesitas hype, no feedback.
           </div>
 
-          <div style={{ fontSize: 26, color: SUAVE, marginTop: 28 }}>palmaditas.com</div>
+          <div style={{ fontSize: px(26), color: SUAVE, marginTop: px(28) }}>palmaditas.com</div>
         </div>
 
         {/* Columna de la conversación */}
@@ -120,9 +133,9 @@ export default function Imagen() {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
-            gap: 12,
+            gap: px(12),
             flex: 1,
-            padding: '0 52px',
+            padding: `0 ${px(52)}px`,
           }}
         >
           <Burbuja propia texto="Quiero abrir una librería con café y jazz en directo" />

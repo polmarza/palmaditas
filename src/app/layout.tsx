@@ -2,9 +2,14 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 const DESCRIPCION =
-  'Tu idea es buenísima. Necesitas hype, no feedback. Cuéntasela a un grupo que está de tu parte.'
+  'Dime si no te ha pasado: has tenido una idea buenísima y la sueltas en un grupo de colegas, ' +
+  'pero nadie le presta la más mínima atención. Hasta ahora. Entra en el grupo, cuenta tu idea y ' +
+  'mira lo que ocurre.'
 
 export const metadata: Metadata = {
+  // Sin esto, Next construye og:image con la URL del despliegue —o con
+  // localhost en desarrollo— en lugar de con el dominio real.
+  metadataBase: new URL('https://palmaditas.com'),
   title: 'Palmaditas',
   description: DESCRIPCION,
   // Este producto se difunde compartiendo el enlace, así que la vista previa
