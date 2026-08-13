@@ -16,7 +16,8 @@ export const metadata: Metadata = {
     locale: 'es_ES',
   },
   twitter: {
-    card: 'summary',
+    // Tarjeta grande: la imagen es el argumento de venta, no un adorno.
+    card: 'summary_large_image',
     title: 'Palmaditas',
     description: DESCRIPCION,
   },
