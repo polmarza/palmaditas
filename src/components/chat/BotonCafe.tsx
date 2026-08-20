@@ -1,9 +1,19 @@
 'use client'
 
 import { ENLACES } from '@/lib/enlaces'
+import { marcarCafe } from '@/lib/metricas/cliente'
 
 /** Marca de que esta persona ya ha pulsado. No se le vuelve a pedir. */
 export const CLAVE_CAFE = 'palmaditas:cafe'
+
+interface Props {
+  /** Identificador aleatorio de la conversación, solo para agrupar la métrica. */
+  sesion: string
+  /** Tanda en la que se pidió. Sirve para saber si el momento es el correcto. */
+  indice: number
+  /** Dónde está el botón: en la burbuja de Iván o en el aviso de cupo. */
+  lugar: 'chat' | 'cupo'
+}
 
 /**
  * El único botón del chat que pide algo.
@@ -12,13 +22,14 @@ export const CLAVE_CAFE = 'palmaditas:cafe'
  * la hace el personaje que se pasa la conversación poniendo pegas, y deja de
  * funcionar en cuanto parece un anuncio pegado encima del chat.
  */
-export function BotonCafe({ variante = 'burbuja' }: { variante?: 'burbuja' | 'ancho' }) {
+export function BotonCafe({ sesion, indice, lugar }: Props) {
   return (
     <a
       href={ENLACES.cafe}
       target="_blank"
       rel="noopener noreferrer"
       onClick={() => {
+        marcarCafe(lugar === 'cupo' ? 'cafe_cupo_pulsado' : 'cafe_chat_pulsado', sesion, indice)
         try {
           localStorage.setItem(CLAVE_CAFE, 'pulsado')
         } catch {
@@ -27,7 +38,7 @@ export function BotonCafe({ variante = 'burbuja' }: { variante?: 'burbuja' | 'an
         }
       }}
       className={
-        variante === 'ancho'
+        lugar === 'cupo'
           ? 'flex items-center justify-center gap-2 rounded-full bg-acento px-5 py-3 text-[15px] font-medium text-white'
           : 'mt-[8px] inline-flex items-center gap-[6px] rounded-full bg-acento px-[14px] py-[7px] text-[14px] font-medium text-white'
       }

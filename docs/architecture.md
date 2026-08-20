@@ -459,3 +459,15 @@ de verdad hasta que aparece el botón.
 
 **Salvaguardas:** si `ENLACES.cafe` está vacío, Iván no dice nada — antes no pedir que pedir con un
 enlace roto. Y quien pulsa queda marcado en `localStorage`: no se le vuelve a pedir.
+
+**Medición (2026-08-20).** `/api/evento` registra cuatro eventos anónimos —visto y pulsado, en el
+chat y en el aviso de cupo— sobre la misma tabla `eventos`, distinguidos por la columna `tipo`. Dos
+detalles que no son opcionales:
+
+- **El límite por IP filtra por `tipo = 'mensaje'`.** Sin ese filtro, ver el botón gastaría cupo.
+- **`/api/evento` nunca acepta el tipo `mensaje`.** Es lo que cuenta el límite: dejarlo abierto
+  permitiría llenarle el cupo a otra persona sin gastar una llamada al modelo.
+
+El "visto" se dispara cuando la burbuja del botón está en pantalla, no cuando se programa, para que
+no cuente a quien cierra la pestaña durante la tanda. Se manda con `sendBeacon`, que sobrevive a que
+la persona se vaya de la página — que es justo lo que pasa al pulsar.

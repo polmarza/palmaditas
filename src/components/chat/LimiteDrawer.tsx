@@ -1,7 +1,9 @@
 'use client'
 
+import { useEffect } from 'react'
 import { ENLACES } from '@/lib/enlaces'
 import { BotonCafe } from './BotonCafe'
+import { marcarCafe } from '@/lib/metricas/cliente'
 
 /**
  * Aviso de cupo agotado.
@@ -10,7 +12,21 @@ import { BotonCafe } from './BotonCafe'
  * porque lo que la persona acaba de escribir con el grupo es suyo y no tiene
  * sentido tapárselo. Lo que queda bloqueado es el campo de escritura.
  */
-export function LimiteDrawer({ onCerrar }: { onCerrar: () => void }) {
+export function LimiteDrawer({
+  onCerrar,
+  sesion,
+  indice,
+}: {
+  onCerrar: () => void
+  sesion: string
+  indice: number
+}) {
+  // Se cuenta una sola vez aunque el aviso se cierre y se vuelva a abrir al
+  // enfocar el campo: lo que interesa es cuánta gente lo ve, no cuántas veces.
+  useEffect(() => {
+    if (ENLACES.cafe !== '') marcarCafe('cafe_cupo_visto', sesion, indice)
+  }, [sesion, indice])
+
   return (
     <div className="absolute inset-x-0 bottom-0 z-20 flex justify-center p-3">
       <div className="burbuja w-full max-w-[420px] rounded-2xl bg-entrante p-5">
@@ -48,7 +64,7 @@ export function LimiteDrawer({ onCerrar }: { onCerrar: () => void }) {
         )}
 
         <div className="mt-4 flex flex-col gap-2">
-          {ENLACES.cafe !== '' && <BotonCafe variante="ancho" />}
+          {ENLACES.cafe !== '' && <BotonCafe sesion={sesion} indice={indice} lugar="cupo" />}
 
           <a
             href={ENLACES.repo}

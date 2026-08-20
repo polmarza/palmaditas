@@ -21,7 +21,7 @@ cero.
 
 ### `sesiones`
 
-Una fila por compra. Es la única tabla del proyecto.
+Una fila por compra. Todavía no existe: entra con los pagos, en la Fase 2.
 
 | Campo | Tipo | Descripción |
 |-------|------|-------------|
@@ -51,6 +51,37 @@ reintentan los webhooks: si el mismo cobro llega dos veces, el segundo `INSERT` 
 **No hay tabla de mensajes, de conversaciones ni de usuarios.** Si alguna vez aparece una, conviene
 releer este documento antes: probablemente signifique que se ha colado un requisito que
 contradice la privacidad del producto.
+
+---
+
+### `eventos`
+
+Una fila por mensaje del chat, más una por cada evento de la invitación al café. Es la tabla que
+existe hoy, y **la única con datos en producción**.
+
+**No guarda ningún contenido.** Ni el mensaje del usuario, ni los del grupo, ni el texto que hizo
+saltar la salvaguarda. Solo números, y un hash con sal de la IP que no es reversible.
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `id` | `bigserial` PK | |
+| `tipo` | `text` NOT NULL, default `'mensaje'` | `mensaje`, `cafe_chat_visto`, `cafe_chat_pulsado`, `cafe_cupo_visto`, `cafe_cupo_pulsado` |
+| `sesion` | `uuid` NOT NULL | Identificador aleatorio de conversación, generado en el navegador. No identifica a nadie |
+| `indice` | `integer` NOT NULL | Posición del mensaje en la conversación. En los eventos de café, la tanda en la que se pidió |
+| `con_mencion` | `boolean` NOT NULL | Si el usuario etiquetó a alguien con `@` |
+| `salvaguarda` | `text` NULL | `comprobar`, `alto` o nulo. Nunca el texto que lo provocó |
+| `tokens_entrada`, `tokens_salida`, `busquedas` | `integer` NOT NULL | Consumo de la tanda |
+| `coste_micros` | `integer` NOT NULL | Coste en millonésimas de dólar: tanda + clasificador + búsquedas |
+| `ip_hash` | `text` NULL | SHA-256 con sal de la IP. **Nunca la IP en claro** |
+| `creado_en` | `timestamptz` NOT NULL | |
+
+**`tipo` no es decorativo: el límite por IP cuenta filas de esta tabla filtrando por
+`tipo = 'mensaje'`.** Si no filtrara, ver el botón del café gastaría cupo. Y por eso `/api/evento`
+rechaza el tipo `mensaje` venga como venga: aceptarlo dejaría que cualquiera llenase el cupo de otra
+persona sin gastar una llamada al modelo.
+
+RLS activado y **sin políticas**: la clave pública no puede leer ni escribir nada. Solo el servidor,
+con la service role.
 
 ---
 
@@ -141,7 +172,9 @@ La limpieza se limita a las sesiones agotadas: se borran las filas con `saldo_mi
 
 | Fecha | Archivo | Descripción |
 |-------|---------|-------------|
-| _pendiente_ | `001_sesiones.sql` | Tabla `sesiones`, índice único en `referencia_pago`, RLS activado sin políticas |
+| 2026-08-19 | `001_eventos.sql` | Tabla `eventos`, índices por sesión, fecha e IP, RLS activado sin políticas |
+| 2026-08-20 | `002_tipo_evento.sql` | Columna `tipo` e índice `(tipo, ip_hash, creado_en)` |
+| _pendiente_ | `003_sesiones.sql` | Tabla `sesiones`, índice único en `referencia_pago`, RLS activado sin políticas |
 
 ---
 

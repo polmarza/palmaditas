@@ -150,6 +150,12 @@ encima del entusiasmo y se lee como publicidad.
 La tercera tanda sale de los datos: un tercio de las conversaciones pasa de 3 mensajes y solo un 2 %
 llega a 10. Pedirlo más tarde es no pedírselo a casi nadie.
 
+**Cómo se sabe si funciona.** Buy Me a Coffee dice cuántos cafés llegan, pero no cuántos vieron la
+petición, así que la tasa hay que medirla aquí: se registra un evento anónimo cuando la invitación
+aparece en pantalla y otro cuando se pulsa, en los dos sitios donde está el botón. Con eso se
+responden las dos preguntas que importan —cuánta gente la ve y cuánta pulsa— y una tercera: si la
+tercera tanda es el momento correcto, porque el evento guarda en qué tanda se pidió.
+
 Esto **no sustituye** al modelo de saldo de abajo, que sigue siendo el plan cuando haya volumen que
 lo justifique. Es lo que se puede cobrar hoy sin pasarela, sin IVA y sin cuentas.
 

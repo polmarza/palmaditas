@@ -8,6 +8,7 @@ import { SystemNotice } from './SystemNotice'
 import { LimiteDrawer } from './LimiteDrawer'
 import { CLAVE_CAFE } from './BotonCafe'
 import { ENLACES } from '@/lib/enlaces'
+import { marcarCafe } from '@/lib/metricas/cliente'
 import { planificar } from '@/lib/elenco/ritmo'
 import type { PersonajeId } from '@/lib/elenco/personajes'
 import type { Fuente, MensajeElenco, Turno } from '@/lib/elenco/tanda'
@@ -20,7 +21,7 @@ interface Visible {
   hora: string
   mono?: boolean
   fuente?: Fuente | null
-  cafe?: boolean
+  cafe?: { sesion: string; indice: number } | null
 }
 
 function ahora(): string {
@@ -113,7 +114,10 @@ export function Chat() {
    * El orden viene del modelo y no se toca; aquí solo se reparten los tiempos.
    * Ver docs/design-system.md.
    */
-  function desplegar(mensajes: MensajeElenco[], opciones: { cafe?: boolean } = {}): number {
+  function desplegar(
+    mensajes: MensajeElenco[],
+    opciones: { cafe?: { sesion: string; indice: number } } = {},
+  ): number {
     const plan = planificar(mensajes)
 
     for (const paso of plan) {
@@ -137,7 +141,7 @@ export function Chat() {
               mono: paso.mensaje.mono,
               fuente: paso.mensaje.fuente,
               // El botón cuelga del último mensaje del bloque, no de cada uno.
-              cafe: opciones.cafe === true && paso === plan.at(-1),
+              cafe: paso === plan.at(-1) ? (opciones.cafe ?? null) : null,
             },
           ])
           // Se retira del indicador solo si no le queda otro mensaje por soltar.
@@ -232,12 +236,20 @@ export function Chat() {
       const fin = desplegar(mensajes)
 
       tandas.current += 1
-      if (tandas.current === TANDA_DEL_CAFE && !cafePedido.current && puedePedirCafe()) {
+      const tanda = tandas.current
+      if (tanda === TANDA_DEL_CAFE && !cafePedido.current && puedePedirCafe()) {
         cafePedido.current = true
         // Fuera del historial a propósito: no lo ha dicho el modelo, así que no
         // puede volver como contexto ni acabar comentado en la tanda siguiente.
         temporizadores.current.push(
-          setTimeout(() => desplegar(INVITACION, { cafe: true }), fin + ESPERA_DEL_CAFE),
+          setTimeout(() => {
+            const total = desplegar(INVITACION, { cafe: { sesion: sesion.current, indice: tanda } })
+            // Se cuenta cuando la burbuja del botón está en pantalla, no cuando
+            // se programa: si no, contaría también a quien cierra antes de verla.
+            temporizadores.current.push(
+              setTimeout(() => marcarCafe('cafe_chat_visto', sesion.current, tanda), total),
+            )
+          }, fin + ESPERA_DEL_CAFE),
         )
       }
     } catch {
@@ -297,7 +309,13 @@ export function Chat() {
         </div>
       </main>
 
-      {drawerVisible && <LimiteDrawer onCerrar={() => setDrawerVisible(false)} />}
+      {drawerVisible && (
+        <LimiteDrawer
+          onCerrar={() => setDrawerVisible(false)}
+          sesion={sesion.current}
+          indice={tandas.current}
+        />
+      )}
 
       <footer className="relative bg-barra px-3 py-2">
         <div className="mx-auto flex max-w-[680px] items-end gap-2">

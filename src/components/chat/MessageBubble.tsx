@@ -11,7 +11,7 @@ interface Props {
   mono?: boolean
   fuente?: Fuente | null
   /** Cierra la invitación de Iván: esta burbuja lleva el botón del café. */
-  cafe?: boolean
+  cafe?: { sesion: string; indice: number } | null
 }
 
 export function MessageBubble({
@@ -58,7 +58,7 @@ export function MessageBubble({
           // El relleno de la derecha reserva sitio para la hora, que va
           // posicionada sobre la burbuja y si no se le montaría encima.
           <div className="pr-[52px]">
-            <BotonCafe />
+            <BotonCafe sesion={cafe.sesion} indice={cafe.indice} lugar="chat" />
           </div>
         )}
 

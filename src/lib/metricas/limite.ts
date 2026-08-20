@@ -31,6 +31,12 @@ export const CUPO_MICROS = 70_000
 /** Ventana del cupo. Un día después se puede volver. */
 const VENTANA_HORAS = 24
 
+/**
+ * La tabla guarda también los eventos de la invitación al café, que no consumen
+ * API. Si contaran, ver el botón gastaría cupo.
+ */
+const SOLO_MENSAJES = 'tipo=eq.mensaje'
+
 export type Motivo = 'ritmo' | 'cupo'
 
 export interface Veredicto {
@@ -52,8 +58,8 @@ export async function comprobarLimite(peticion: Request): Promise<Veredicto> {
 
   try {
     const [ultimoMinuto, ultimaHora, gastado] = await Promise.all([
-      contar('eventos', `ip_hash=eq.${hash}&creado_en=gte.${desdeMinuto}`),
-      contar('eventos', `ip_hash=eq.${hash}&creado_en=gte.${desdeHora}`),
+      contar('eventos', `${SOLO_MENSAJES}&ip_hash=eq.${hash}&creado_en=gte.${desdeMinuto}`),
+      contar('eventos', `${SOLO_MENSAJES}&ip_hash=eq.${hash}&creado_en=gte.${desdeHora}`),
       gastoDe(hash, desdeVentana),
     ])
 
@@ -79,7 +85,7 @@ export async function comprobarLimite(peticion: Request): Promise<Veredicto> {
 async function gastoDe(hash: string, desde: string): Promise<number> {
   const filas = await seleccionar<{ coste_micros: number }>(
     'eventos',
-    `select=coste_micros&ip_hash=eq.${hash}&creado_en=gte.${desde}`,
+    `select=coste_micros&${SOLO_MENSAJES}&ip_hash=eq.${hash}&creado_en=gte.${desde}`,
   )
   return filas.reduce((total, fila) => total + (fila.coste_micros ?? 0), 0)
 }
