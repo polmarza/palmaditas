@@ -1,5 +1,6 @@
 import { PERSONAJES, type PersonajeId } from '@/lib/elenco/personajes'
 import type { Fuente } from '@/lib/elenco/tanda'
+import { BotonCafe } from './BotonCafe'
 
 interface Props {
   personaje: PersonajeId | 'usuario'
@@ -9,9 +10,19 @@ interface Props {
   primeroDelBloque: boolean
   mono?: boolean
   fuente?: Fuente | null
+  /** Cierra la invitación de Iván: esta burbuja lleva el botón del café. */
+  cafe?: boolean
 }
 
-export function MessageBubble({ personaje, texto, hora, primeroDelBloque, mono, fuente }: Props) {
+export function MessageBubble({
+  personaje,
+  texto,
+  hora,
+  primeroDelBloque,
+  mono,
+  fuente,
+  cafe,
+}: Props) {
   const esUsuario = personaje === 'usuario'
   const datos = esUsuario ? null : PERSONAJES[personaje]
 
@@ -42,6 +53,14 @@ export function MessageBubble({ personaje, texto, hora, primeroDelBloque, mono, 
           {/* Hueco para que la hora no se solape con la última línea. */}
           <span className="inline-block w-[52px]" />
         </div>
+
+        {cafe && (
+          // El relleno de la derecha reserva sitio para la hora, que va
+          // posicionada sobre la burbuja y si no se le montaría encima.
+          <div className="pr-[52px]">
+            <BotonCafe />
+          </div>
+        )}
 
         {fuente && (
           <a

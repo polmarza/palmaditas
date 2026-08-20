@@ -1,6 +1,7 @@
 'use client'
 
 import { ENLACES } from '@/lib/enlaces'
+import { BotonCafe } from './BotonCafe'
 
 /**
  * Aviso de cupo agotado.
@@ -36,12 +37,29 @@ export function LimiteDrawer({ onCerrar }: { onCerrar: () => void }) {
           código está abierto, los personajes también.
         </p>
 
+        {/*
+          Quien agota el cupo entero es quien más se ha reído: es el mejor
+          momento para pedir, y el único en el que pedir no interrumpe nada.
+        */}
+        {ENLACES.cafe !== '' && (
+          <p className="mt-2 text-[14px] leading-relaxed text-texto-suave">
+            Y si te ha hecho gracia, la API la paga Pol de su bolsillo.
+          </p>
+        )}
+
         <div className="mt-4 flex flex-col gap-2">
+          {ENLACES.cafe !== '' && <BotonCafe variante="ancho" />}
+
           <a
             href={ENLACES.repo}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-full bg-acento px-5 py-3 text-center text-[15px] font-medium text-white"
+            className={
+              ENLACES.cafe !== ''
+                ? 'rounded-full border px-5 py-3 text-center text-[15px] font-medium'
+                : 'rounded-full bg-acento px-5 py-3 text-center text-[15px] font-medium text-white'
+            }
+            style={ENLACES.cafe !== '' ? { borderColor: 'var(--color-garabato)' } : undefined}
           >
             Ver el repositorio en GitHub
           </a>

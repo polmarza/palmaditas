@@ -6,6 +6,8 @@ import { DoodleBackground } from './DoodleBackground'
 import { MessageBubble } from './MessageBubble'
 import { SystemNotice } from './SystemNotice'
 import { LimiteDrawer } from './LimiteDrawer'
+import { CLAVE_CAFE } from './BotonCafe'
+import { ENLACES } from '@/lib/enlaces'
 import { planificar } from '@/lib/elenco/ritmo'
 import type { PersonajeId } from '@/lib/elenco/personajes'
 import type { Fuente, MensajeElenco, Turno } from '@/lib/elenco/tanda'
@@ -18,10 +20,58 @@ interface Visible {
   hora: string
   mono?: boolean
   fuente?: Fuente | null
+  cafe?: boolean
 }
 
 function ahora(): string {
   return new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+}
+
+/**
+ * Tandas completas antes de que Iván pida el café.
+ *
+ * Sale de los datos del lanzamiento: la mediana es de 2 mensajes por
+ * conversación, un tercio pasa de 3 y solo un 2 % llega a 10. Pedirlo más tarde
+ * es no pedírselo a casi nadie; pedirlo antes es pedirlo sin que se hayan reído
+ * todavía. En la tercera ya han visto el mecanismo entero un par de veces.
+ */
+const TANDA_DEL_CAFE = 3
+
+/** Beat entre el final de la tanda y el corte de Iván. */
+const ESPERA_DEL_CAFE = 1200
+
+/**
+ * Lo pide Iván, no Rosa.
+ *
+ * Rosa pidiendo dinero es más entusiasmo encima del entusiasmo, y se lee como
+ * publicidad. Iván se ha pasado la conversación poniendo pegas, así que es el
+ * único al que se le cree — y el chiste es que rompe el personaje justo para
+ * esto, sin dejar de decir que la idea sigue sin convencerle.
+ */
+const INVITACION: MensajeElenco[] = [
+  { personaje: 'ivan', texto: 'oye, paro un momento', mono: false, fuente: null },
+  {
+    personaje: 'ivan',
+    texto: 'esto lo ha montado un tío que se llama Pol, y la api la paga él de su bolsillo',
+    mono: false,
+    fuente: null,
+  },
+  {
+    personaje: 'ivan',
+    texto: 'yo no te voy a decir que tu idea sea buena. pero si te estás riendo, invítale a un café',
+    mono: false,
+    fuente: null,
+  },
+]
+
+/** Si no hay enlace, Iván no dice nada: mejor no pedir que pedir en falso. */
+function puedePedirCafe(): boolean {
+  if (ENLACES.cafe === '') return false
+  try {
+    return localStorage.getItem(CLAVE_CAFE) === null
+  } catch {
+    return true
+  }
 }
 
 export function Chat() {
@@ -38,6 +88,9 @@ export function Chat() {
   const contador = useRef(0)
   /** La tanda anterior fue una comprobación: el siguiente mensaje es la respuesta. */
   const traComprobacion = useRef(false)
+  /** Tandas que ha soltado el grupo. Decide cuándo corta Iván para pedir el café. */
+  const tandas = useRef(0)
+  const cafePedido = useRef(false)
   /**
    * Identificador aleatorio de esta conversación, solo para agrupar métricas.
    * No identifica a nadie y se pierde al recargar; no viaja nada del contenido.
@@ -60,7 +113,7 @@ export function Chat() {
    * El orden viene del modelo y no se toca; aquí solo se reparten los tiempos.
    * Ver docs/design-system.md.
    */
-  function desplegar(mensajes: MensajeElenco[]) {
+  function desplegar(mensajes: MensajeElenco[], opciones: { cafe?: boolean } = {}): number {
     const plan = planificar(mensajes)
 
     for (const paso of plan) {
@@ -83,6 +136,8 @@ export function Chat() {
               hora: ahora(),
               mono: paso.mensaje.mono,
               fuente: paso.mensaje.fuente,
+              // El botón cuelga del último mensaje del bloque, no de cada uno.
+              cafe: opciones.cafe === true && paso === plan.at(-1),
             },
           ])
           // Se retira del indicador solo si no le queda otro mensaje por soltar.
@@ -104,6 +159,8 @@ export function Chat() {
         setOcupado(false)
       }, total + 50),
     )
+
+    return total
   }
 
   async function enviar() {
@@ -133,6 +190,9 @@ export function Chat() {
       if (respuesta.status === 429) {
         const { motivo } = (await respuesta.json()) as { motivo?: string }
         historial.current.pop()
+        // El mensaje no ha llegado a enviarse: se retira de la vista y vuelve al
+        // campo. Si no, se ve dos veces y parece que sí ha salido.
+        setVisibles((previos) => previos.slice(0, -1))
         setBorrador(texto)
 
         if (motivo === 'cupo') {
@@ -169,7 +229,17 @@ export function Chat() {
       traComprobacion.current = datos.comprobacion === true
       const mensajes = datos.mensajes ?? []
       historial.current.push({ rol: 'grupo', contenido: JSON.stringify({ mensajes }) })
-      desplegar(mensajes)
+      const fin = desplegar(mensajes)
+
+      tandas.current += 1
+      if (tandas.current === TANDA_DEL_CAFE && !cafePedido.current && puedePedirCafe()) {
+        cafePedido.current = true
+        // Fuera del historial a propósito: no lo ha dicho el modelo, así que no
+        // puede volver como contexto ni acabar comentado en la tanda siguiente.
+        temporizadores.current.push(
+          setTimeout(() => desplegar(INVITACION, { cafe: true }), fin + ESPERA_DEL_CAFE),
+        )
+      }
     } catch {
       setError('No he podido contactar con el grupo. Vuelve a intentarlo.')
       setOcupado(false)
@@ -213,6 +283,7 @@ export function Chat() {
                 hora={mensaje.hora}
                 mono={mensaje.mono}
                 fuente={mensaje.fuente}
+                cafe={mensaje.cafe}
                 primeroDelBloque={visibles[indice - 1]?.personaje !== mensaje.personaje}
               />
             ),

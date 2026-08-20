@@ -1,5 +1,16 @@
-/** Enlaces externos del producto, en un solo sitio. */
-export const ENLACES = {
+interface Enlaces {
+  repo: string
+  linkedin: string
+  cafe: string
+}
+
+/**
+ * Enlaces externos del producto, en un solo sitio.
+ *
+ * Tipado a `string` y no con `as const` a propósito: los sitios que comprueban
+ * si un enlace está vacío dejarían de compilar en cuanto se rellenara.
+ */
+export const ENLACES: Enlaces = {
   repo: 'https://github.com/polmarza/palmaditas',
 
   /**
@@ -9,4 +20,13 @@ export const ENLACES = {
    * contacto no se muestra. Rellenar con el perfil real.
    */
   linkedin: '',
-} as const
+
+  /**
+   * Página de Buy Me a Coffee del autor.
+   *
+   * Mismo criterio: vacío hasta que exista de verdad. Mientras lo esté, Iván no
+   * pide nada y el botón del aviso de cupo tampoco aparece — es preferible no
+   * pedir a pedir con un enlace roto.
+   */
+  cafe: '',
+}

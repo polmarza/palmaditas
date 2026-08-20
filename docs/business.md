@@ -124,6 +124,35 @@ Dos supuestos que ya se han confirmado midiendo:
    cachear, y nuestro prompt no llega ni de lejos. Los números de arriba son sin descuento por
    caché: si el elenco crece y el prompt supera ese umbral, mejorarán solos.
 
+### Antes del saldo: la propina de Iván (2026-08-20)
+
+Con los datos del primer lanzamiento, cobrar por saldo es prematuro. La mediana son **2 mensajes por
+conversación** y el gasto mediano por persona es de **0,0089 $**: 5 € de saldo son más de cien
+conversaciones medianas, un paquete que nadie va a agotar y que obliga a explicar créditos a alguien
+que ha venido a un chiste.
+
+Así que la primera monetización no es un muro, es una propina. **Iván corta la conversación en la
+tercera tanda** y dice que esto lo paga alguien de su bolsillo, con un botón de Buy Me a Coffee
+dentro de su propia burbuja. El mismo botón aparece en el aviso de cupo agotado, que es el otro
+momento de intención alta.
+
+| | |
+|---|---|
+| **Quién lo pide** | Iván, no Rosa |
+| **Cuándo** | Tras la tercera tanda, y al agotar el cupo |
+| **Cuántas veces** | Una por conversación. Nunca más si ya ha pulsado |
+| **Qué desbloquea** | Nada. No hay muro que levantar |
+
+Iván porque es el único al que se le cree: se ha pasado la conversación poniendo pegas, así que
+cuando rompe el personaje para pedir algo no suena a marketing. Rosa pidiendo dinero es entusiasmo
+encima del entusiasmo y se lee como publicidad.
+
+La tercera tanda sale de los datos: un tercio de las conversaciones pasa de 3 mensajes y solo un 2 %
+llega a 10. Pedirlo más tarde es no pedírselo a casi nadie.
+
+Esto **no sustituye** al modelo de saldo de abajo, que sigue siendo el plan cuando haya volumen que
+lo justifique. Es lo que se puede cobrar hoy sin pasarela, sin IVA y sin cuentas.
+
 ### La pasarela: decisión aplazada a propósito
 
 El mecanismo es idéntico en todas: pago confirmado → webhook → el servidor acredita N mensajes a un

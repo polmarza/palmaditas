@@ -218,8 +218,8 @@ Iván, y la carcasa está para que ellos parezcan reales.
 
 ### MessageBubble
 Un mensaje. Props: `personaje` (`rosa | nacho | bego | ivan | usuario`), `texto`, `hora`,
-`primeroDelBloque`. El color del nombre y la cola salen de ahí. La variante `usuario` es la verde,
-alineada a la derecha y con doble check.
+`primeroDelBloque`, y opcionalmente `fuente` y `cafe`. El color del nombre y la cola salen de ahí. La
+variante `usuario` es la verde, alineada a la derecha y con doble check.
 
 ### ChatHeader
 Cabecera: avatar del grupo, nombre ("Palmaditas"), lista de participantes y —cuando toca— el estado
@@ -246,6 +246,16 @@ en lugar de animaciones de `scroll-timeline`, que aún no son fiables ahí. Y **
 scroll** — los mensajes aparecen al pasar, pero la página la controla el usuario.
 
 Con `prefers-reduced-motion` se muestra la conversación entera de golpe, sin animación de entrada.
+
+### BotonCafe
+
+El único botón del chat que pide algo. Dos variantes: `burbuja`, dentro del último mensaje de Iván,
+y `ancho`, en el aviso de cupo agotado.
+
+**Va dentro de la burbuja, nunca en una banda encima del chat.** La petición funciona porque la hace
+un personaje y deja de funcionar en cuanto parece un anuncio pegado por encima. Por eso el relleno
+de la derecha reserva sitio para la hora: si la hora se le monta encima, se nota que el botón no
+formaba parte del mensaje.
 
 ### DoodleBackground
 Nuestro patrón de garabatos: palmas, manos aplaudiendo, confeti, trofeos. SVG propio, en mosaico,

@@ -426,3 +426,36 @@ volumen es ruido frente a los segundos que tarda la propia tanda.
 
 **Lo que sigue sin cubrir:** una IP rotatoria. El tope de gasto de la cuenta de Anthropic sigue
 siendo la única red que aguanta ese caso, y no deja de serlo con pagos.
+
+### 2026-08-20 — La primera monetización la pide Iván, y no la genera el modelo
+
+**Contexto:** hay que empezar a cobrar, pero los datos del lanzamiento desaconsejan un muro: mediana
+de 2 mensajes por conversación y 0,0089 $ de gasto mediano por persona.
+
+**Decisión:** una invitación a Buy Me a Coffee dentro de una burbuja de Iván, tras la tercera tanda,
+una vez por conversación. **El texto es fijo y vive en el cliente**, no en el prompt.
+
+**Por qué no lo escribe el modelo:**
+
+- No se puede garantizar cuándo lo diría, ni si lo diría. Una mecánica de monetización no puede
+  depender de que salga el número.
+- Añadir la petición al prompt del elenco la mete en el mismo sitio que las reglas de voz, y el
+  modelo empezaría a mencionarla de más o a comentarla en tandas posteriores.
+- Contradiría "no expliques el chiste, no salgas del personaje". Sale del personaje una vez, cuando
+  nosotros lo decidimos, y no vuelve.
+
+**Consecuencia técnica:** la invitación **no entra en `historial`**. No la ha dicho el modelo, así
+que no puede volver como contexto ni acabar comentada en la tanda siguiente. Se despliega con el
+mismo `planificar()` que una tanda real, de modo que se teclea igual y no se distingue de un mensaje
+de verdad hasta que aparece el botón.
+
+**Alternativas descartadas:**
+
+- *Una banda o un banner sobre el chat.* Es lo que la gente ha aprendido a no mirar, y rompe el clon.
+- *Que lo pida Rosa.* Es entusiasmo encima del entusiasmo: se lee como publicidad. Iván funciona
+  porque es el que lleva toda la conversación poniendo pegas.
+- *Levantar un muro de pago ahora.* Con 5 € de saldo el usuario compra más de cien conversaciones
+  medianas. El muro cobraría menos que la propina y ahuyentaría a los que vuelven.
+
+**Salvaguardas:** si `ENLACES.cafe` está vacío, Iván no dice nada — antes no pedir que pedir con un
+enlace roto. Y quien pulsa queda marcado en `localStorage`: no se le vuelve a pedir.
