@@ -24,9 +24,8 @@ export const ENLACES: Enlaces = {
   /**
    * Página de Buy Me a Coffee del autor.
    *
-   * Mismo criterio: vacío hasta que exista de verdad. Mientras lo esté, Iván no
-   * pide nada y el botón del aviso de cupo tampoco aparece — es preferible no
-   * pedir a pedir con un enlace roto.
+   * Si se vacía, Iván deja de pedir y el botón del aviso de cupo desaparece: es
+   * preferible no pedir a pedir con un enlace roto.
    */
-  cafe: '',
+  cafe: 'https://buymeacoffee.com/polmarza',
 }

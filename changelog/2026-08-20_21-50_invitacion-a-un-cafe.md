@@ -43,5 +43,4 @@ en el momento en que la persona se está riendo convierte mejor que un paquete q
 
 ## Pendiente
 
-`ENLACES.cafe` sigue vacío. Hasta que no lleve la URL real de Buy Me a Coffee, la invitación no se
-muestra.
+`ENLACES.linkedin` sigue vacío, así que el botón de contacto del aviso de cupo no se muestra.
