@@ -29,6 +29,8 @@ export type Nivel = 'normal' | 'comprobar' | 'alto'
 export interface Veredicto {
   nivel: Nivel
   categoria: Categoria | null
+  /** Lo que ha costado clasificar, en millonésimas de dólar. */
+  costeMicros: number
 }
 
 const INSTRUCCIONES = `Decides si un mensaje escrito en un chat de humor debe recibir la respuesta normal del chat o no.
@@ -118,7 +120,14 @@ export async function clasificar(
   const bloque = respuesta.content.find((b) => b.type === 'text')
   if (!bloque || bloque.type !== 'text') throw new Error('El clasificador no devolvió texto.')
 
-  return JSON.parse(bloque.text) as Veredicto
+  const veredicto = JSON.parse(bloque.text) as Omit<Veredicto, 'costeMicros'>
+
+  // Se cobra en cada mensaje, así que su coste tiene que contarse: si no, el
+  // gasto real siempre sale por encima de lo registrado.
+  return {
+    ...veredicto,
+    costeMicros: Math.round(respuesta.usage.input_tokens * 1 + respuesta.usage.output_tokens * 5),
+  }
 }
 
 /**

@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto'
 import { generarTanda, type Turno } from '@/lib/elenco/tanda'
 import { clasificar, respuestaDelSistema } from '@/lib/salvaguarda/clasificar'
 import { comprobarLimite } from '@/lib/metricas/limite'
@@ -30,7 +31,7 @@ export async function POST(peticion: Request) {
 
   let historial: Turno[]
   let traComprobacion = false
-  let sesion: string | null = null
+  let sesionCliente: string | null = null
 
   try {
     const cuerpo = (await peticion.json()) as {
@@ -41,10 +42,21 @@ export async function POST(peticion: Request) {
     if (!Array.isArray(cuerpo.historial)) throw new Error('historial ausente')
     historial = cuerpo.historial as Turno[]
     traComprobacion = cuerpo.traComprobacion === true
-    sesion = typeof cuerpo.sesion === 'string' ? cuerpo.sesion : null
+    sesionCliente = typeof cuerpo.sesion === 'string' ? cuerpo.sesion : null
   } catch {
     return Response.json({ error: 'Petición mal formada.' }, { status: 400 })
   }
+
+  /**
+   * Toda petición se registra, venga o no con sesión del cliente.
+   *
+   * Antes el registro dependía de que el navegador la mandara, así que una
+   * llamada directa al endpoint —un script, un bot— consumía API sin dejar
+   * rastro y, como el límite cuenta filas de esta misma tabla, tampoco gastaba
+   * cupo: uso ilimitado y gratis. En el lanzamiento eso fue la mayor parte del
+   * gasto. Si no viene sesión, se inventa una aquí.
+   */
+  const sesion = sesionCliente ?? randomUUID()
 
   if (historial.length === 0 || historial.length > 200) {
     return Response.json({ error: 'Historial fuera de rango.' }, { status: 400 })
@@ -66,23 +78,28 @@ export async function POST(peticion: Request) {
     .map((turno) => turno.contenido)
 
   let comprobacion = false
+  // El clasificador se cobra en cada mensaje aunque el grupo acabe callándose.
+  let costeSalvaguarda = 0
 
   try {
-    const { nivel, categoria } = await clasificar(ultimo.contenido, previos, traComprobacion)
+    const { nivel, categoria, costeMicros } = await clasificar(
+      ultimo.contenido,
+      previos,
+      traComprobacion,
+    )
+    costeSalvaguarda = costeMicros
 
     if (nivel === 'alto') {
-      if (sesion) {
-        void registrar(peticion, {
-          sesion,
-          indice,
-          conMencion: false,
-          salvaguarda: 'alto',
-          tokensEntrada: 0,
-          tokensSalida: 0,
-          busquedas: 0,
-          costeMicros: 0,
-        })
-      }
+      await registrar(peticion, {
+        sesion,
+        indice,
+        conMencion: false,
+        salvaguarda: 'alto',
+        tokensEntrada: 0,
+        tokensSalida: 0,
+        busquedas: 0,
+        costeMicros: costeSalvaguarda,
+      })
       return Response.json({ sistema: respuestaDelSistema(categoria) })
     }
     // Señal ambigua: en vez de aplaudir o de soltar un teléfono, se pregunta.
@@ -98,22 +115,31 @@ export async function POST(peticion: Request) {
       comprobacion,
     })
 
-    if (sesion) {
-      void registrar(peticion, {
-        sesion,
-        indice,
-        conMencion: mencion !== null,
-        salvaguarda: comprobacion ? 'comprobar' : null,
-        tokensEntrada: tokens.entrada,
-        tokensSalida: tokens.salida,
-        busquedas,
-        costeMicros: Math.round(coste * 1_000_000),
-      })
-    }
+    await registrar(peticion, {
+      sesion,
+      indice,
+      conMencion: mencion !== null,
+      salvaguarda: comprobacion ? 'comprobar' : null,
+      tokensEntrada: tokens.entrada,
+      tokensSalida: tokens.salida,
+      busquedas,
+      costeMicros: Math.round(coste * 1_000_000) + costeSalvaguarda,
+    })
 
     return Response.json({ mensajes, comprobacion })
   } catch (error) {
     console.error('Fallo al generar la tanda:', error)
+    // Se registra igualmente: la llamada al modelo puede haberse cobrado.
+    await registrar(peticion, {
+      sesion,
+      indice,
+      conMencion: false,
+      salvaguarda: null,
+      tokensEntrada: 0,
+      tokensSalida: 0,
+      busquedas: 0,
+      costeMicros: costeSalvaguarda,
+    })
     return Response.json({ error: 'El grupo no ha contestado.' }, { status: 502 })
   }
 }

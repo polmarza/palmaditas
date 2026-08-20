@@ -10,6 +10,14 @@ export const MODELO = 'claude-haiku-4-5'
 const PRECIO = { entrada: 1.0, salida: 5.0 }
 
 /**
+ * Dólares por búsqueda web (10 $ por cada mil).
+ *
+ * Se factura aparte de los tokens, así que si no se suma aquí el coste de una
+ * tanda con búsqueda sale muy por debajo de lo que acaba costando de verdad.
+ */
+const PRECIO_BUSQUEDA = 0.01
+
+/**
  * Búsquedas por tanda. Es a la vez tope de coste y de latencia: cada búsqueda
  * añade segundos, y el techo de una tanda son 10 s (ver docs/design-system.md).
  */
@@ -135,7 +143,10 @@ export async function generarTanda(
       busquedas,
       mencion,
       tokens: { entrada, salida },
-      coste: (entrada / 1e6) * PRECIO.entrada + (salida / 1e6) * PRECIO.salida,
+      coste:
+        (entrada / 1e6) * PRECIO.entrada +
+        (salida / 1e6) * PRECIO.salida +
+        busquedas * PRECIO_BUSQUEDA,
     }
   }
 

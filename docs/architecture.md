@@ -394,3 +394,35 @@ y Bego deja de ser la que se inventa las cosas para ser la que las mira.
 real, sin tocar la API.
 **Consecuencias:** coste cero por visita y control total sobre la primera impresión. Obliga a que la
 demo comparta componentes con el chat real: si se ven distintos, la demo miente.
+
+### 2026-08-20 — Toda petición deja fila, y el gasto se cuenta entero
+
+**Contexto:** el primer lanzamiento cerró con 6,10 $ facturados por Anthropic y 1,49 $ registrados
+en `eventos`. Cuatro quintas partes del gasto eran invisibles.
+
+**Decisión:** cuatro correcciones sobre la misma idea — lo que no se registra no se puede limitar.
+
+- El identificador de conversación llegaba en el cuerpo de la petición y el registro estaba
+  envuelto en un `if`. Ahora, si no viene, se genera en el servidor. Nunca vuelve a haber una
+  llamada al modelo sin su fila.
+- El registro se esperaba con `void`. En serverless la función se congela al responder, así que una
+  parte se perdía. Ahora se espera antes de devolver la respuesta.
+- El clasificador de la salvaguarda devuelve su propio `costeMicros`. Se cobra en cada mensaje,
+  también en los que acaban en `alto` y no generan tanda.
+- Las búsquedas web se facturan aparte de los tokens, a 0,01 $ cada una, y se suman al coste de la
+  tanda.
+
+**Alternativas descartadas:**
+
+- *Firmar el identificador de conversación en una cookie.* Es lo correcto cuando haya saldo real,
+  pero aquí el sujeto del límite es la IP, no la conversación: la sesión solo agrupa métricas. Una
+  cookie no habría cerrado nada que no cierre generar el identificador en el servidor.
+- *Dejar el coste de la salvaguarda fuera por ser pequeño.* Es pequeño por mensaje y no lo es por
+  mes: se paga en el cien por cien de las peticiones, incluidas las que no producen respuesta.
+
+**Consecuencias:** el cupo por IP vuelve a medir lo que dice medir, y las cifras de uso sirven para
+poner precio en la Fase 2. Se paga una inserción en la ruta caliente antes de responder; a este
+volumen es ruido frente a los segundos que tarda la propia tanda.
+
+**Lo que sigue sin cubrir:** una IP rotatoria. El tope de gasto de la cuenta de Anthropic sigue
+siendo la única red que aguanta ese caso, y no deja de serlo con pagos.
